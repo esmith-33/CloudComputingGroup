@@ -1,0 +1,22 @@
+[debug] [2020-07-02T18:23:49.416Z] ----------------------------------------------------------------------
+[debug] [2020-07-02T18:23:49.418Z] Command:       /usr/local/bin/firebase /Users/emmettsmith/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase serve --only hosting
+[debug] [2020-07-02T18:23:49.418Z] CLI Version:   7.15.1
+[debug] [2020-07-02T18:23:49.418Z] Platform:      darwin
+[debug] [2020-07-02T18:23:49.418Z] Node Version:  v12.13.1
+[debug] [2020-07-02T18:23:49.418Z] Time:          Thu Jul 02 2020 13:23:49 GMT-0500 (Central Daylight Time)
+[debug] [2020-07-02T18:23:49.418Z] ----------------------------------------------------------------------
+[debug] [2020-07-02T18:23:49.419Z] 
+[debug] [2020-07-02T18:23:49.423Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-07-02T18:23:49.424Z] > authorizing via signed-in user
+[debug] [2020-07-02T18:23:49.424Z] [iam] checking project cs403-5cc4c for permissions ["firebase.projects.get"]
+[debug] [2020-07-02T18:23:49.425Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/cs403-5cc4c:testIamPermissions  
+
+[debug] [2020-07-02T18:23:51.085Z] <<< HTTP RESPONSE 200
+[debug] [2020-07-02T18:23:51.088Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/cs403-5cc4c  
+ 
+[debug] [2020-07-02T18:23:51.860Z] <<< HTTP RESPONSE 200
+[debug] [2020-07-02T18:23:51.862Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/cs403-5cc4c/webApps/-/config  
+ 
+[debug] [2020-07-02T18:23:52.865Z] <<< HTTP RESPONSE 200
+[info] i  hosting[cs403-5cc4c]: Serving hosting files from: public
+[info] ✔  hosting[cs403-5cc4c]: Local server: http://localhost:5000
