@@ -13,7 +13,6 @@
 -->
 <html lang="en">
 
-
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,16 +23,18 @@
   <!-- Disable tap highlight on IE -->
   <meta name="msapplication-tap-highlight" content="no">
 
+  <!-- Web Application Manifest -->
+  <link rel="manifest" href="manifest.json">
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="Friendly Chat">
+  <meta name="application-name" content="CS403">
   <meta name="theme-color" content="#303F9F">
 
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Friendly Chat">
+  <meta name="apple-mobile-web-app-title" content="CS403">
   <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F">
 
   <!-- Tile icon for Win8 -->
@@ -48,7 +49,6 @@
   <!-- App Styling -->
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-  <link rel="stylesheet" href="styles/chat-copy.css">
   <link rel="stylesheet" href="styles/chat.css">
   <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
   <link href="assets/css/app-creative.css" rel="stylesheet" type="text/css" id="light-style" />
@@ -102,7 +102,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#newsFeed" data-toggle="tab" aria-expanded="true" class="nav-link rounded-0">
+              <a href="#Feed" data-toggle="tab" aria-expanded="true" class="nav-link rounded-0">
                 Feed
               </a>
             </li>
@@ -174,14 +174,12 @@
 
                 <!--Start Timeline!!!!!!!!!!! -->
                 <div class="tab-pane show active" id="timeline">
+
+                  <!-- comment box -->
                   <div class="border rounded mt-2 mb-3">
-
-                    <!-- MessagFes container -->
-
-
-                    <form id="Feed-forms" action="#" class="comment-area-box">
-                      <textarea rows="3" class="form-control border-0 resize-none" type="text" id="Feed"
-                        autocomplete="off" placeholder="Write something...."></textarea>
+                    <form id="feed-area-box" action="#" class="comment-area-box">
+                      <textarea rows="3" class="form-control border-0 resize-none" id='feed-control'
+                        placeholder="Write something...."></textarea>
                       <div class="p-2 bg-light d-flex justify-content-between align-items-center">
                         <div>
                           <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i
@@ -191,20 +189,153 @@
                           <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i
                               class="mdi mdi-emoticon-outline"></i></a>
                         </div>
-                        <button type="submit" class="btn btn-sm btn-dark waves-effect">Post
-                        </button>
+                        <button type="submit" class="btn btn-sm btn-dark waves-effect">Post</button>
                       </div>
                     </form>
-                    <!-- <div id="Feeds"> -->
+                  </div> <!-- end .border-->
+                  <!-- end comment box -->
 
+                  <!-- Story Box-->
+                  <section class="mdl-grid content" id="user-posts-list" style="display:none">
+                    <div class="posts-container mdl-cell mdl-cell--12-col mdl-grid">
+                    </div>
+                  </section>
+                  <div class="border border-light rounded p-2 mb-3">
+                    <div class="media">
+                      <img class="mr-2 rounded-circle" src="assets/images/users/avatar-3.jpg"
+                        alt="Generic placeholder image" height="32">
+                      <div class="media-body">
+                        <h5 class="m-0">Jeremy Tomlinson</h5>
+                        <p class="text-muted"><small>about 2 minuts
+                            ago</small></p>
+                      </div>
+                    </div>
+                    <p>Story based around the idea of time lapse, animation
+                      to post soon!
+                    </p>
+
+                    <img src="assets/images/small/small-1.jpg" alt="post-img" class="rounded mr-1" height="60" />
+                    <img src="assets/images/small/small-2.jpg" alt="post-img" class="rounded mr-1" height="60" />
+                    <img src="assets/images/small/small-3.jpg" alt="post-img" class="rounded" height="60" />
+
+                    <div class="mt-2">
+                      <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
+                          class="mdi mdi-reply"></i>
+                        Reply</a>
+                      <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
+                          class="mdi mdi-heart-outline"></i>
+                        Like</a>
+                      <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
+                          class="mdi mdi-share-variant"></i>
+                        Share</a>
+                    </div>
                   </div>
 
-                </div <!-- end comment box -->
+                  <!-- Story Box-->
+                  <div class="border border-light rounded p-2 mb-3">
+                    <div class="media">
+                      <img class="mr-2 rounded-circle" src="assets/images/users/avatar-4.jpg"
+                        alt="Generic placeholder image" height="32">
+                      <div class="media-body">
+                        <h5 class="m-0">Thelma Fridley</h5>
+                        <p class="text-muted"><small>about 1 hour
+                            ago</small></p>
+                      </div>
+                    </div>
+                    <div class="font-16 text-center font-italic text-dark">
+                      <i class="mdi mdi-format-quote-open font-20"></i>
+                      Cras sit amet nibh
+                      libero, in
+                      gravida nulla. Nulla vel metus scelerisque ante
+                      sollicitudin. Cras
+                      purus odio, vestibulum in vulputate at, tempus
+                      viverra turpis. Duis
+                      sagittis ipsum. Praesent mauris. Fusce nec tellus
+                      sed augue semper
+                      porta. Mauris massa.
+                    </div>
 
-                <!-- Story Box-->
-                <div id="Feeds"></div>
+                    <div class="mx-n2 p-2 mt-3 bg-light">
+                      <div class="media">
+                        <img class="mr-2 rounded-circle" src="assets/images/users/avatar-3.jpg"
+                          alt="Generic placeholder image" height="32">
+                        <div class="media-body">
+                          <h5 class="mt-0">Jeremy Tomlinson <small class="text-muted">3
+                              hours ago</small></h5>
+                          Nice work, makes me think of The Money Pit.
 
+                          <br />
+                          <a href="javascript: void(0);" class="text-muted font-13 d-inline-block mt-2"><i
+                              class="mdi mdi-reply"></i>
+                            Reply</a>
 
+                          <div class="media mt-3">
+                            <a class="pr-2" href="#">
+                              <img src="assets/images/users/avatar-4.jpg" class="rounded-circle"
+                                alt="Generic placeholder image" height="32">
+                            </a>
+                            <div class="media-body">
+                              <h5 class="mt-0">Thelma Fridley
+                                <small class="text-muted">5
+                                  hours
+                                  ago</small></h5>
+                              i'm in the middle of a timelapse
+                              animation myself!
+                              (Very different though.) Awesome
+                              stuff.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="media mt-2">
+                        <a class="pr-2" href="#">
+                          <img src="assets/images/users/avatar-1.jpg" class="rounded-circle"
+                            alt="Generic placeholder image" height="32">
+                        </a>
+                        <div class="media-body">
+                          <input type="text" id="simpleinput" class="form-control border-0 form-control-sm"
+                            placeholder="Add comment">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mt-2">
+                      <a href="javascript: void(0);" class="btn btn-sm btn-link text-danger"><i
+                          class="mdi mdi-heart"></i>
+                        Like (28)</a>
+                      <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
+                          class="mdi mdi-share-variant"></i>
+                        Share</a>
+                    </div>
+                  </div>
+
+                  <!-- Story Box-->
+                  <div class="border border-light p-2 mb-3">
+                    <div class="media">
+                      <img class="mr-2 rounded-circle" src="assets/images/users/avatar-6.jpg"
+                        alt="Generic placeholder image" height="32">
+                      <div class="media-body">
+                        <h5 class="m-0">Martin Williamson</h5>
+                        <p class="text-muted"><small>15 hours
+                            ago</small></p>
+                      </div>
+                    </div>
+                    <p>The parallax is a little odd but O.o that house build
+                      is awesome!!
+                    </p>
+
+                    <iframe src='https://player.vimeo.com/video/87993762' height='300'
+                      class="img-fluid border-0"></iframe>
+                  </div>
+
+                  <div class="text-center">
+                    <a href="javascript:void(0);" class="text-danger"><i class="mdi mdi-spin mdi-loading mr-1"></i>
+                      Load
+                      more </a>
+                  </div>
+
+                </div>
                 <!-- end timeline content-->
                 <!--Start Settings!!!!!!!!!!! -->
 
@@ -363,7 +494,7 @@
                 </div>
                 <!--End Settings!!!!!!!!!!! -->
                 <!--Start Feed!!!!!!!!!!! -->
-                <div class="tab-pane" id="newsFeed">
+                <div class="tab-pane" id="Feed">
 
 
                   <!-- new post -->
@@ -680,7 +811,7 @@
         <script src="/__/firebase/7.15.4/firebase-analytics.js"></script>
         <script src="/__/firebase/init.js"></script>
 
-        <script src="scripts/feed-working-copy.js"></script>
+        <script src="scripts/feed-post-copy.js"></script>
         <script src="scripts/main.js"></script>
         <script src="assets/js/vendor.min.js"></script>
         <script src="assets/js/app.min.js"></script>
