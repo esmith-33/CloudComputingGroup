@@ -362,7 +362,11 @@ function toggleButton() {
 	}
 }
 
+<<<<<<< HEAD
+// Checks that the Firebase SDK has been correctly setup and configured.
+=======
 // Checks that the Firebase SDK has been correctly setup and configured This will be deleted.
+>>>>>>> master~
 function checkSetup() {
 	if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
 		window.alert(
