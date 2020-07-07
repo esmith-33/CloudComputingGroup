@@ -253,10 +253,10 @@ function resetMaterialTextfield(element) {
 
 // Template for Feeds.
 var Feed_TEMPLATE =
-	'<div class="Feed-container">' +
-	'<div class="spacing"><div class="pic"></div>' +
-	'<div class="name"></div></div>' +
-	'<div class="Feed"></div>' +
+	'<div class="border border-light rounded p-2 mb-3">' +
+	'<div class="media"><div class="pic"></div><div class="media-body">' +
+	'<div class="name"></div></div></div>' +
+	'<div><p class="Feed" font-16 text-center font-italic text-dark></p></div>' +
 	'</div>';
 
 // Adds a size to Google Profile pics URLs.
@@ -362,7 +362,7 @@ function toggleButton() {
 	}
 }
 
-// Checks that the Firebase SDK has been correctly setup and configured.
+// Checks that the Firebase SDK has been correctly setup and configured This will be deleted.
 function checkSetup() {
 	if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
 		window.alert(
@@ -381,9 +381,9 @@ var FeedListElement = document.getElementById('Feeds');
 var FeedFormElement = document.getElementById('Feed-forms');
 var FeedInputElement = document.getElementById('Feed');
 var submitButtonElement = document.getElementById('submit');
-var imageButtonElement = document.getElementById('submitImage');
-var imageFormElement = document.getElementById('image-form');
-var mediaCaptureElement = document.getElementById('mediaCapture');
+var imageButtonElement = document.getElementById('submitImages');
+var imageFormElement = document.getElementById('image-forms');
+var mediaCapturesElement = document.getElementById('mediaCaptures');
 var userPicElement = document.getElementById('user-pic');
 var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
@@ -402,9 +402,9 @@ FeedInputElement.addEventListener('change', toggleButton);
 // Events for image upload.
 imageButtonElement.addEventListener('click', function(e) {
 	e.preventDefault();
-	mediaCaptureElement.click();
+	mediaCapturesElement.click();
 });
-mediaCaptureElement.addEventListener('change', onMediaFileSelected);
+mediaCapturesElement.addEventListener('change', onMediaFileSelected);
 
 // initialize Firebase
 initFirebaseAuth();

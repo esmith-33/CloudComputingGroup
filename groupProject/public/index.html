@@ -184,13 +184,17 @@
                         autocomplete="off" placeholder="Write something...."></textarea>
                       <div class="p-2 bg-light d-flex justify-content-between align-items-center">
                         <div>
-                          <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i
-                              class="mdi mdi-account-circle"></i></a>
                           <a action="#" class="btn btn-sm px-2 font-16 btn-light"><i class="mdi mdi-map-marker"></i></a>
-                          <form action="#" id="media-Capture" action="#"
-                            class="feed-image-form btn btn-sm px-2 font-16 btn-light"><i class="mdi mdi-camera"></i>
 
+
+
+                          <form id="image-forms" action="#">
+                            <input hidden id="mediaCaptures" type="file" accept="image/*" capture="camera">
+                            <button id="submitImages" title="Add an image" class="btn btn-sm px-2 font-16 btn-light">
+                              <i class="mdi mdi-camera"></i>
+                            </button>
                           </form>
+
                           <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i
                               class="mdi mdi-emoticon-outline"></i></a>
                         </div>
@@ -201,6 +205,20 @@
                     <div id="Feeds"></div>
 
                   </div>
+                  <div class="my-1">
+                    <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted pl-0"><i
+                        class='mdi mdi-heart text-danger'></i>
+                      2k
+                      Likes</a>
+                    <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
+                        class='uil uil-comments-alt'></i> 200
+                      Comments</a>
+                    <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
+                        class='uil uil-share-alt'></i>
+                      Share</a>
+                  </div>
+
+                  <hr class="m-0" />
 
                 </div <!-- end comment box -->
 

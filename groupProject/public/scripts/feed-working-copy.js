@@ -257,6 +257,8 @@ var Feed_TEMPLATE =
 	'<div class="media"><div class="pic"></div><div class="media-body">' +
 	'<div class="name"></div></div></div>' +
 	'<div><p class="Feed" font-16 text-center font-italic text-dark></p></div>' +
+	'<div class="my-1"><div class="btn btn-sm btn-link text-muted pl-0">' +
+	'<i class="mdi mdi-heart text-danger" ></i>' +
 	'</div>';
 
 // Adds a size to Google Profile pics URLs.
@@ -362,11 +364,7 @@ function toggleButton() {
 	}
 }
 
-<<<<<<< HEAD
-// Checks that the Firebase SDK has been correctly setup and configured.
-=======
 // Checks that the Firebase SDK has been correctly setup and configured This will be deleted.
->>>>>>> master~
 function checkSetup() {
 	if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
 		window.alert(
@@ -385,9 +383,9 @@ var FeedListElement = document.getElementById('Feeds');
 var FeedFormElement = document.getElementById('Feed-forms');
 var FeedInputElement = document.getElementById('Feed');
 var submitButtonElement = document.getElementById('submit');
-var imageButtonElement = document.getElementById('submitImage');
-var imageFormElement = document.getElementById('image-form');
-var mediaCaptureElement = document.getElementById('mediaCapture');
+var imageButtonElement = document.getElementById('submitImages');
+var imageFormElement = document.getElementById('image-forms');
+var mediaCapturesElement = document.getElementById('mediaCaptures');
 var userPicElement = document.getElementById('user-pic');
 var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
@@ -406,9 +404,9 @@ FeedInputElement.addEventListener('change', toggleButton);
 // Events for image upload.
 imageButtonElement.addEventListener('click', function(e) {
 	e.preventDefault();
-	mediaCaptureElement.click();
+	mediaCapturesElement.click();
 });
-mediaCaptureElement.addEventListener('change', onMediaFileSelected);
+mediaCapturesElement.addEventListener('change', onMediaFileSelected);
 
 // initialize Firebase
 initFirebaseAuth();
