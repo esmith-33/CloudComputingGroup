@@ -257,6 +257,10 @@ var Feed_TEMPLATE =
 	'<div class="media"><div class="pic"></div><div class="media-body">' +
 	'<div class="name"></div></div></div>' +
 	'<div><p class="Feed" font-16 text-center font-italic text-dark></p></div>' +
+	'<div class="my-1"><div class="btn btn-sm btn-link text-muted pl-0">' +
+	'<i class="mdi mdi-heart text-danger "></i>Like &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
+	'<i class="uil uil-comments - alt"></i>Comment &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
+	'<i class ="uil uil-share-alt"></i> Share &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
 	'</div>';
 
 // Adds a size to Google Profile pics URLs.
@@ -311,7 +315,7 @@ function createAndInsertFeed(id, timestamp) {
 			FeedListNode = FeedListNode.nextSibling;
 		}
 
-		FeedListElement.insertBefore(div, FeedListNode);
+		FeedListElement.appendChild(div, FeedListNode);
 	}
 
 	return div;
