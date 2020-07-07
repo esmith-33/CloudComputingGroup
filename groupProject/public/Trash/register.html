@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Register | CS403 </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.png">
+
+    <!-- App css -->
+    <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/app-creative.css" rel="stylesheet" type="text/css" id="light-style" />
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+    <script type="text/javascript">
+
+        /**
+         * Handles the sign in button press.
+         */
+        function toggleSignIn() {
+            if (firebase.auth().currentUser) {
+                // [START signout]
+                firebase.auth().signOut();
+                // [END signout]
+            } else {
+                var email = document.getElementById('email').value;
+                var password = document.getElementById('password').value;
+                if (email.length < 4) {
+                    alert('Please enter an email address.');
+                    return;
+                }
+                if (password.length < 4) {
+                    alert('Please enter a password.');
+                    return;
+                }
+                // Sign in with email and pass.
+                // [START authwithemail]
+                firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    // [START_EXCLUDE]
+                    if (errorCode === 'auth/wrong-password') {
+                        alert('Wrong password.');
+                    } else {
+                        alert(errorMessage);
+                    }
+                    console.log(error);
+                    document.getElementById('quickstart-sign-in').disabled = false;
+                    // [END_EXCLUDE]
+                });
+                // [END authwithemail]
+            }
+            document.getElementById('quickstart-sign-in').disabled = true;
+        }
+
+        /**
+         * Handles the sign up button press.
+         */
+        function handleSignUp() {
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            if (email.length < 4) {
+                alert('Please enter an email address.');
+                return;
+            }
+            if (password.length < 4) {
+                alert('Please enter a password.');
+                return;
+            }
+            // Create user with email and pass.
+            // [START createwithemail]
+            firebase.auth().createUserWithEmailAndPassword(email, password).catch(function (error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // [START_EXCLUDE]
+                if (errorCode == 'auth/weak-password') {
+                    alert('The password is too weak.');
+                } else {
+                    alert(errorMessage);
+                }
+                console.log(error);
+                // [END_EXCLUDE]
+            });
+            // [END createwithemail]
+        }
+
+        /**
+         * Sends an email verification to the user.
+         */
+        function sendEmailVerification() {
+            // [START sendemailverification]
+            firebase.auth().currentUser.sendEmailVerification().then(function () {
+                // Email Verification sent!
+                // [START_EXCLUDE]
+                alert('Email Verification Sent!');
+                // [END_EXCLUDE]
+            });
+            // [END sendemailverification]
+        }
+
+        function sendPasswordReset() {
+            var email = document.getElementById('email').value;
+            // [START sendpasswordemail]
+            firebase.auth().sendPasswordResetEmail(email).then(function () {
+                // Password Reset Email Sent!
+                // [START_EXCLUDE]
+                alert('Password Reset Email Sent!');
+                // [END_EXCLUDE]
+            }).catch(function (error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // [START_EXCLUDE]
+                if (errorCode == 'auth/invalid-email') {
+                    alert(errorMessage);
+                } else if (errorCode == 'auth/user-not-found') {
+                    alert(errorMessage);
+                }
+                console.log(error);
+                // [END_EXCLUDE]
+            });
+            // [END sendpasswordemail];
+        }
+
+        /**
+         * initApp handles setting up UI event listeners and registering Firebase auth listeners:
+         *  - firebase.auth().onAuthStateChanged: This listener is called when the user is signed in or
+         *    out, and that is where we update the UI.
+         */
+        function initApp() {
+            // Listening for auth state changes.
+            // [START authstatelistener]
+            firebase.auth().onAuthStateChanged(function (user) {
+                // [START_EXCLUDE silent]
+
+                // [END_EXCLUDE]
+                if (user) {
+                    // User is signed in.
+                    var displayName = user.displayName;
+                    var email = user.email;
+                    var emailVerified = user.emailVerified;
+                    var photoURL = user.photoURL;
+                    var isAnonymous = user.isAnonymous;
+                    var uid = user.uid;
+                    var providerData = user.providerData;
+                    // [START_EXCLUDE]
+                    document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
+                    document.getElementById('quickstart-sign-in').textContent = 'Sign out';
+                    document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
+                    if (emailVerified = false) {
+                        document.getElementById('quickstart-verify-email').disabled = false;
+                    }
+                    // [END_EXCLUDE]
+                } else {
+                    // User is signed out.
+                    // [START_EXCLUDE]
+                    document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
+                    document.getElementById('quickstart-sign-in').textContent = 'Sign in';
+                    document.getElementById('quickstart-account-details').textContent = 'null';
+                    // [END_EXCLUDE]
+                }
+                // [START_EXCLUDE silent]
+                document.getElementById('quickstart-sign-in').disabled = false;
+                // [END_EXCLUDE]
+            });
+            // [END authstatelistener]
+
+            document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
+            document.getElementById('quickstart-sign-up').addEventListener('click', handleSignUp, false);
+            document.getElementById('quickstart-verify-email').addEventListener('click', sendEmailVerification, false);
+            document.getElementById('quickstart-password-reset').addEventListener('click', sendPasswordReset, false);
+        }
+
+        window.onload = function () {
+            initApp();
+        };
+    </script>
+
+</head>
+
+<body class="authentication-bg pb-0" data-layout-config='{"darkMode":false}'>
+
+    <div class="auth-fluid">
+        <!--Auth fluid left content -->
+        <div class="auth-fluid-form-box">
+            <div class="align-items-center d-flex h-100">
+                <div class="card-body">
+
+                    <!-- Logo -->
+                    <div class="auth-brand text-center text-lg-left">
+                        <a href="index.html" class="logo-dark">
+                            <span><img src="assets/images/logo-dark.png" alt="" height="18"></span>
+                        </a>
+                        <a href="index.html" class="logo-light">
+                            <span><img src="assets/images/logo.png" alt="" height="18"></span>
+                        </a>
+                    </div>
+
+                    <!-- title-->
+                    <h4 class="mt-0">Free Sign Up</h4>
+                    <p class="text-muted mb-4">Don't have an account? Create your account, it takes less than a minute
+                    </p>
+
+                    <!-- form -->
+                    <div>
+
+                        <div class="form-group">
+                            <label for="email">Email address</label>
+                            <input class="form-control" type="email" id="email" required placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input class="form-control" type="password" required id="password"
+                                placeholder="Enter your password">
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group mb-0 text-center">
+                            <button class="btn btn-primary" id="quickstart-sign-up" name="signup">Sign
+                                Up</button>
+                        </div>
+
+                    </div>
+                    <div class="form-group mb-0 text-center">
+                        <button class="btn btn-primary" id="quickstart-verify-email" name="signin">Verify
+                            Email</button>
+                    </div>
+                </div>
+
+                <div class="form-group mb-0 text-center">
+                    <button hidden class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in"
+                        name="signin">Sign
+                        In</button>
+                </div>
+            </div>
+
+
+        </div>
+        <!-- end form-->
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <p class="text-muted">Already have account? <a href="pages-login.html" class="text-muted ml-1"><b>Log
+                            In</b></a>
+                </p>
+            </div> <!-- end col-->
+        </div>
+        <!-- Footer-->
+        <footer class="footer footer-alt">
+            <div class="form-group mb-0 text-center">
+
+            </div>
+        </footer>
+
+
+    </div> <!-- end .card-body -->
+    </div> <!-- end .align-items-center.d-flex.h-100-->
+    </div>
+    <!-- end auth-fluid-form-box-->
+
+    <!-- Auth fluid right content -->
+
+    <!-- end Auth fluid right content -->
+    </div>
+    <!-- end auth-fluid-->
+
+    <!-- bundle -->
+    <script src="/__/firebase/7.15.5/firebase-app.js"></script>
+
+    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+    <script src="/__/firebase/7.15.5/firebase-analytics.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="/__/firebase/7.15.5/firebase-auth.js"></script>
+    <script src="/__/firebase/7.15.5/firebase-firestore.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/7.15.5/firebase-auth.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-database.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-storage.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+    <script src="node_modules/firebaseui/dist/firebaseui.js"></script>
+
+
+</body>
+
+</html>
