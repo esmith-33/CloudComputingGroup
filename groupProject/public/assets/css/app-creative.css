@@ -6420,6 +6420,26 @@ a.badge-dark:focus {
   flex: 1;
 }
 
+.media .pic {
+  background-image: url('/images/profile_placeholder.png');
+  width: 30px;
+  height: 30px;
+  background-size: 30px;
+  border-radius: 20px;
+
+  float: right;
+}
+
+.media .name {
+  display: block;
+  width: 100%;
+  padding-left: 5px;
+  color: black;
+  font-size: 14px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
 .list-group {
   display: -webkit-box;
   display: -ms-flexbox;
