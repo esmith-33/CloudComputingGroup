@@ -1,6 +1,18 @@
 {
-  "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
-  }
+	"rules": {
+		"users": {
+			".read": true,
+			"$uid": {
+				".write": "auth.uid === $uid"
+			}
+		},
+		"followers": {
+			"$followedUid": {
+				"$followerUid": {
+					".read": "auth.uid === $followerUid",
+					".write": "auth.uid === $followerUid"
+				}
+			}
+		}
+	}
 }

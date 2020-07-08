@@ -40,7 +40,7 @@ function initFirebaseAuth() {
 
 // Returns the signed-in user's profile pic URL.
 function getProfilePicUrl() {
-	return firebase.auth().currentUser.photoURL || '/images/profile_placeholder.png';
+	return firebase.auth().currentUser.photoURL || 'assets/images/users/profile_placeholder.png';
 }
 
 // Returns the signed-in user's display name.
@@ -68,6 +68,24 @@ function saveFeed(FeedText) {
 		.catch(function(error) {
 			console.error('Error writing new Feed to database', error);
 		});
+}
+function saveUsers() {
+	// Add a new Feed entry to the database.
+	if (firebase.firestore.collections(Users).doc((firebase.auth().currentUser.uid = false))) {
+		return firebase
+			.firestore()
+			.collection('Users')
+			.add({
+				name: getUserName(),
+				uid: firebase.auth().currentUser.uid,
+
+				profilePicUrl: getProfilePicUrl(),
+				timestamp: firebase.firestore.FieldValue.serverTimestamp()
+			})
+			.catch(function(error) {
+				console.error('Error writing new Feed to database', error);
+			});
+	}
 }
 
 // Loads chat Feeds history and listens for upcoming ones.
@@ -119,6 +137,11 @@ function saveImageFeed(file) {
 			console.error('There was an error uploading a file to Cloud Storage:', error);
 		});
 }
+firebase.firestore().collection('Feeds').get().then((querySnapshot) => {
+	querySnapshot.forEach((doc) => {
+		console.log(`${doc.id} => ${doc.data()}`);
+	});
+});
 
 // Saves the messaging device token to the datastore.
 function saveMessagingDeviceToken() {
@@ -393,6 +416,7 @@ var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
+var usersContainer = document.getElementById('demo-all-users-list');
 
 // Saves Feed on form submit.
 FeedFormElement.addEventListener('submit', onFeedFormSubmit);
