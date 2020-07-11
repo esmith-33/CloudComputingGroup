@@ -59,7 +59,7 @@ Demo.prototype.onAuthStateChanged = function(user) {
 
 	// Adjust UI depending on user state.
 	if (user) {
-		this.nameContainer.innerText = user.displyName;
+		//this.nameContainer.innerText = user.displyName;
 		this.signedOutCard.style.display = 'none';
 		this.signedInCard.style.display = 'block';
 		this.usersCard.style.display = 'block';

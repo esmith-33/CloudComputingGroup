@@ -70,22 +70,24 @@ function saveFeed(FeedText) {
 		});
 }
 function saveUsers() {
-	// Add a new Feed entry to the database.
-	if (firebase.firestore.collections(Users).doc((firebase.auth().currentUser.uid = false))) {
-		return firebase
-			.firestore()
-			.collection('Users')
-			.add({
-				name: getUserName(),
-				uid: firebase.auth().currentUser.uid,
+	// Add a new User entry to the database.
+	var email = firebase.auth().currentUser.email;
 
-				profilePicUrl: getProfilePicUrl(),
-				timestamp: firebase.firestore.FieldValue.serverTimestamp()
-			})
-			.catch(function(error) {
-				console.error('Error writing new Feed to database', error);
-			});
-	}
+	return firebase
+		.firestore()
+		.collection('Users')
+		.doc(email)
+		.set({
+			name: getUserName(),
+
+			email: firebase.auth().currentUser.email,
+
+			profilePicUrl: getProfilePicUrl(),
+			timestamp: firebase.firestore.FieldValue.serverTimestamp()
+		})
+		.catch(function(error) {
+			console.error('Error writing new User to database', error);
+		});
 }
 
 // Loads chat Feeds history and listens for upcoming ones.
@@ -105,6 +107,12 @@ function loadFeeds() {
 		});
 	});
 }
+firebase.firestore().collection('Users').get().then((querySnapshot) => {
+	querySnapshot.forEach((doc) => {
+		console.log(`Profile Updated`);
+	});
+	//saveUsers();
+});
 
 // Saves a new Feed containing an image in Firebase.
 // This first saves the image in Firebase storage.
@@ -137,11 +145,6 @@ function saveImageFeed(file) {
 			console.error('There was an error uploading a file to Cloud Storage:', error);
 		});
 }
-firebase.firestore().collection('Feeds').get().then((querySnapshot) => {
-	querySnapshot.forEach((doc) => {
-		console.log(`${doc.id} => ${doc.data()}`);
-	});
-});
 
 // Saves the messaging device token to the datastore.
 function saveMessagingDeviceToken() {
@@ -156,7 +159,7 @@ function saveMessagingDeviceToken() {
 					.firestore()
 					.collection('fcmTokens')
 					.doc(currentToken)
-					.set({ uid: firebase.auth().currentUser.uid });
+					.add({ uid: firebase.auth().currentUser.uid });
 			} else {
 				// Need to request permissions to show notifications.
 				requestNotificationsPermissions();
@@ -416,7 +419,7 @@ var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
-var usersContainer = document.getElementById('demo-all-users-list');
+//var usersContainer = document.getElementById('demo-all-users-list');
 
 // Saves Feed on form submit.
 FeedFormElement.addEventListener('submit', onFeedFormSubmit);

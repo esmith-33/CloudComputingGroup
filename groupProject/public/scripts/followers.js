@@ -21,21 +21,14 @@ function Demo() {
 		'DOMContentLoaded',
 		function() {
 			// Shortcuts to DOM Elements.
-			this.signInButton = document.getElementById('demo-sign-in-button');
-			this.signOutButton = document.getElementById('demo-sign-out-button');
+
 			this.nameContainer = document.getElementById('demo-name-container');
 			this.fcmErrorContainer = document.getElementById('demo-fcm-error-container');
-			this.deleteButton = document.getElementById('demo-delete-button');
-			this.signedOutCard = document.getElementById('demo-signed-out-card');
-			this.signedInCard = document.getElementById('demo-signed-in-card');
 			this.usersContainer = document.getElementById('demo-all-users-list');
 			this.usersCard = document.getElementById('demo-all-users-card');
 			this.snackbar = document.getElementById('demo-snackbar');
 
 			// Bind events.
-
-			this.signOutButton.addEventListener('click', this.signOut.bind(this));
-			this.deleteButton.addEventListener('click', this.deleteAccount.bind(this));
 			firebase.auth().onAuthStateChanged(this.onAuthStateChanged.bind(this));
 			firebase.messaging().onMessage(this.onMessage.bind(this));
 		}.bind(this)
@@ -48,7 +41,6 @@ Demo.prototype.onAuthStateChanged = function(user) {
 	if (user && this.currentUid === user.uid) {
 		return;
 	}
-
 	// Remove all Firebase realtime database listeners.
 	if (this.listeners) {
 		this.listeners.forEach(function(ref) {
@@ -60,19 +52,12 @@ Demo.prototype.onAuthStateChanged = function(user) {
 	// Adjust UI depending on user state.
 	if (user) {
 		this.nameContainer.innerText = user.displyName;
-		this.signedOutCard.style.display = 'none';
-		this.signedInCard.style.display = 'block';
 		this.usersCard.style.display = 'block';
-		firebase.database().ref(`users/${user.uid}`).update({
-			displayName: user.displayName,
-			photoURL: user.photoURL
-		});
+
 		this.saveToken();
 		this.displayAllUsers();
 		this.currentUid = user.uid;
 	} else {
-		this.signedOutCard.style.display = 'block';
-		this.signedInCard.style.display = 'none';
 		this.usersCard.style.display = 'none';
 		this.usersContainer.innerHTML = '';
 		this.currentUid = '';
@@ -81,7 +66,7 @@ Demo.prototype.onAuthStateChanged = function(user) {
 
 // Display all users so that they can be followed.
 Demo.prototype.displayAllUsers = function() {
-	var usersRef = firebase.database().ref('users');
+	var usersRef = firebase.firestore().collection('Users').orderBy('name').limit(12);
 	usersRef.on(
 		'child_added',
 		function(snapshot) {
@@ -132,7 +117,7 @@ Demo.prototype.displayAllUsers = function() {
 
 			// Listen for the Switch state from the Realtime database.
 			var switchElement = document.getElementById('demo-follow-switch-' + uid);
-			var followUserRef = firebase.database().ref('followers/' + uid + '/' + this.currentUid);
+			var followUserRef = firebase.firestore().collection('followers/' + uid + '/' + this.currentUid);
 			this.listeners.push(followUserRef);
 			followUserRef.on('value', function(followSnapshot) {
 				switchElement.checked = !!followSnapshot.val();
@@ -149,37 +134,6 @@ Demo.prototype.displayAllUsers = function() {
 		}.bind(this)
 	);
 	this.listeners.push(usersRef);
-};
-
-// Initiates the sign-in flow using LinkedIn sign in in a popup.
-Demo.prototype.signIn = function() {
-	var google = new firebase.auth.GoogleAuthProvider();
-	firebase.auth().signInWithPopup(google);
-};
-
-// Signs-out of Firebase.
-Demo.prototype.signOut = function() {
-	firebase.auth().signOut();
-};
-
-// Deletes the user's account.
-Demo.prototype.deleteAccount = function() {
-	return firebase.database().ref('users/' + this.currentUid).remove().then(function() {
-		return firebase
-			.auth()
-			.currentUser.delete()
-			.then(function() {
-				window.alert('Account deleted');
-			})
-			.catch(function(error) {
-				if (error.code === 'auth/requires-recent-login') {
-					window.alert(
-						'You need to have recently signed-in to delete your account. Please sign-in and try again.'
-					);
-					firebase.auth().signOut();
-				}
-			});
-	});
 };
 
 // This is called when a notification is received while the app is in focus.
@@ -212,8 +166,8 @@ Demo.prototype.saveToken = function() {
 			function(currentToken) {
 				if (currentToken) {
 					firebase
-						.database()
-						.ref('users/' + this.currentUid + '/notificationTokens/' + currentToken)
+						.firestore()
+						.collection('users/' + this.currentUid + '/notificationTokens/' + currentToken)
 						.set(true);
 				} else {
 					this.requestPermission();
