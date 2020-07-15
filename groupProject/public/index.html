@@ -41,7 +41,9 @@
   <meta name="msapplication-navbutton-color" content="#303F9F">
 
   <!-- Material Design Lite -->
+  >
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
   <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 
@@ -52,7 +54,7 @@
   <link rel="stylesheet" href="styles/chat.css">
   <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
   <link href="assets/css/app-creative.css" rel="stylesheet" type="text/css" id="light-style" />
-
+  <link rel="stylesheet" href="styles/followers.css">
   <!-- Enable First Input Delay polyfill library. -->
   <script
     type="text/javascript">!function (n, e) { var t, o, i, c = [], f = { passive: !0, capture: !0 }, r = new Date, a = "pointerup", u = "pointercancel"; function p(n, c) { t || (t = c, o = n, i = new Date, w(e), s()) } function s() { o >= 0 && o < i - r && (c.forEach(function (n) { n(o, t) }), c = []) } function l(t) { if (t.cancelable) { var o = (t.timeStamp > 1e12 ? new Date : performance.now()) - t.timeStamp; "pointerdown" == t.type ? function (t, o) { function i() { p(t, o), r() } function c() { r() } function r() { e(a, i, f), e(u, c, f) } n(a, i, f), n(u, c, f) }(o, t) : p(o, t) } } function w(n) { ["click", "mousedown", "keydown", "touchstart", "pointerdown"].forEach(function (e) { n(e, l, f) }) } w(n), self.perfMetrics = self.perfMetrics || {}, self.perfMetrics.onFirstInputDelay = function (n) { c.push(n), s() } }(addEventListener, removeEventListener);</script>
@@ -107,8 +109,8 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#settings" data-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
-                Settings
+              <a href="#people" data-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
+                People
               </a>
             </li>
             <li class="nav-item">
@@ -125,6 +127,8 @@
 
     <div class="container">
       <div class="col-xl-8 col-lg-7">
+
+
 
 
 
@@ -176,7 +180,7 @@
                 <div class="tab-pane show active" id="timeline">
                   <div class="border rounded mt-2 mb-3">
 
-                    <!-- MessagFes container -->
+                    <!-- MessagFes container https://firebase.google.com/docs/firestore/solutions/counters -->
 
 
                     <form id="Feed-forms" action="#" class="comment-area-box">
@@ -184,13 +188,17 @@
                         autocomplete="off" placeholder="Write something...."></textarea>
                       <div class="p-2 bg-light d-flex justify-content-between align-items-center">
                         <div>
-                          <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i
-                              class="mdi mdi-account-circle"></i></a>
                           <a action="#" class="btn btn-sm px-2 font-16 btn-light"><i class="mdi mdi-map-marker"></i></a>
-                          <form action="#" id="media-Capture" action="#"
-                            class="feed-image-form btn btn-sm px-2 font-16 btn-light"><i class="mdi mdi-camera"></i>
 
+
+
+                          <form id="image-forms" action="#">
+                            <input hidden id="mediaCaptures" type="file" accept="image/*" capture="camera">
+                            <button id="submitImages" title="Add an image" class="btn btn-sm px-2 font-16 btn-light">
+                              <i class="mdi mdi-camera"></i>
+                            </button>
                           </form>
+
                           <a href="#" class="btn btn-sm px-2 font-16 btn-light"><i
                               class="mdi mdi-emoticon-outline"></i></a>
                         </div>
@@ -202,6 +210,9 @@
 
                   </div>
 
+
+                  <hr class="m-0" />
+
                 </div <!-- end comment box -->
 
                 <!-- Story Box-->
@@ -209,162 +220,36 @@
 
 
                 <!-- end timeline content-->
-                <!--Start Settings!!!!!!!!!!! -->
+                <!--Start People!!!!!!!!!!! -->
 
-                <div class="tab-pane" id="settings">
-                  <form>
-                    <h5 class="mb-4 text-uppercase"><i class="mdi mdi-account-circle mr-1"></i>
-                      Personal Info</h5>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="firstname">First Name</label>
-                          <input type="text" class="form-control" id="firstname" placeholder="Enter first name">
-                        </div>
+                <div class="tab-pane" id="people">
+
+                  <div class="app-search">
+                    <form id="search-forms" action="#">
+                      <div class="form-group position-relative">
+                        <input id="search-people" type="text" class="form-control"
+                          placeholder="People, groups & messages..." />
+                        <button id="submit-search" type="submit" class="fa fa-search"></button>
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="lastname">Last Name</label>
-                          <input type="text" class="form-control" id="lastname" placeholder="Enter last name">
-                        </div>
-                      </div> <!-- end col -->
-                    </div> <!-- end row -->
+                    </form>
+                  </div>
+                  <div class="demo-all-users-list"></div>
 
-                    <div class="row">
-                      <div class="col-12">
-                        <div class="form-group">
-                          <label for="userbio">Bio</label>
-                          <textarea class="form-control" id="userbio" rows="4"
-                            placeholder="Write something..."></textarea>
-                        </div>
-                      </div> <!-- end col -->
-                    </div> <!-- end row -->
 
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="useremail">Email Address</label>
-                          <input type="email" class="form-control" id="useremail" placeholder="Enter email">
-                          <span class="form-text text-muted"><small>If
-                              you want to
-                              change email please <a href="javascript: void(0);">click</a>
-                              here.</small></span>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="userpassword">Password</label>
-                          <input type="password" class="form-control" id="userpassword" placeholder="Enter password">
-                          <span class="form-text text-muted"><small>If
-                              you want to
-                              change password please <a href="javascript: void(0);">click</a>
-                              here.</small></span>
-                        </div>
-                      </div> <!-- end col -->
-                    </div> <!-- end row -->
+                  <!-- Header section containing title -->
 
-                    <h5 class="mb-3 text-uppercase bg-light p-2"><i class="mdi mdi-office-building mr-1"></i>
-                      Company Info</h5>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="companyname">Company
-                            Name</label>
-                          <input type="text" class="form-control" id="companyname" placeholder="Enter company name">
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="cwebsite">Website</label>
-                          <input type="text" class="form-control" id="cwebsite" placeholder="Enter website url">
-                        </div>
-                      </div> <!-- end col -->
-                    </div> <!-- end row -->
 
-                    <h5 class="mb-3 text-uppercase bg-light p-2"><i class="mdi mdi-earth mr-1"></i>
-                      Social</h5>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="social-fb">Facebook</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="mdi mdi-facebook"></i></span>
-                            </div>
-                            <input type="text" class="form-control" id="social-fb" placeholder="Url">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="social-tw">Twitter</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="mdi mdi-twitter"></i></span>
-                            </div>
-                            <input type="text" class="form-control" id="social-tw" placeholder="Username">
-                          </div>
-                        </div>
-                      </div> <!-- end col -->
-                    </div> <!-- end row -->
+                  <!-- Card containing the sign-in UI -->
 
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="social-insta">Instagram</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="mdi mdi-instagram"></i></span>
-                            </div>
-                            <input type="text" class="form-control" id="social-insta" placeholder="Url">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="social-lin">Linkedin</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="mdi mdi-linkedin"></i></span>
-                            </div>
-                            <input type="text" class="form-control" id="social-lin" placeholder="Url">
-                          </div>
-                        </div>
-                      </div> <!-- end col -->
-                    </div> <!-- end row -->
 
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="social-sky">Skype</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="mdi mdi-skype"></i></span>
-                            </div>
-                            <input type="text" class="form-control" id="social-sky" placeholder="@username">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="social-gh">Github</label>
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="mdi mdi-github-circle"></i></span>
-                            </div>
-                            <input type="text" class="form-control" id="social-gh" placeholder="Username">
-                          </div>
-                        </div>
-                      </div> <!-- end col -->
-                    </div> <!-- end row -->
+                  <!-- Card containing the signed-in UI -->
 
-                    <div class="text-right">
-                      <button type="submit" class="btn btn-success mt-2"><i class="mdi mdi-content-save"></i>
-                        Save</button>
-                    </div>
-                  </form>
+
+                  <!-- Card containing the users to follow -->
+
+
                 </div>
-                <!--End Settings!!!!!!!!!!! -->
+                <!--End People!!!!!!!!!!! -->
                 <!--Start Feed!!!!!!!!!!! -->
                 <div class="tab-pane" id="newsFeed">
 
@@ -473,7 +358,8 @@
                           2k
                           Likes</a>
                         <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
-                            class='uil uil-comments-alt'></i> 200
+                            class='uil uil-comments-alt'></i>
+                          200
                           Comments</a>
                         <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
                             class='uil uil-share-alt'></i>
@@ -682,11 +568,15 @@
         <script src="/__/firebase/7.15.1/firebase-performance.js"></script>
         <script src="/__/firebase/7.15.4/firebase-analytics.js"></script>
         <script src="/__/firebase/init.js"></script>
-
-        <script src="scripts/feed-working-copy.js"></script>
         <script src="scripts/main.js"></script>
+
+        <script src="scripts/feed-working.js"></script>
+        <script src="scripts/followers.js"></script>
+
         <script src="assets/js/vendor.min.js"></script>
+        <script src="assets/js/user-list.js"></script>
         <script src="assets/js/app.min.js"></script>
+
 
 
 
