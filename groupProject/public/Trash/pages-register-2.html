@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Register | CS403 </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.png">
+
+    <!-- App css -->
+    <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/app-creative.css" rel="stylesheet" type="text/css" id="light-style" />
+    <script defer src="/__/firebase/7.15.5/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/7.15.5/firebase-auth.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-database.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-storage.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+
+</head>
+
+<body class="authentication-bg pb-0" data-layout-config='{"darkMode":false}'>
+
+    <div class="auth-fluid">
+        <!--Auth fluid left content -->
+        <div class="auth-fluid-form-box">
+            <div class="align-items-center d-flex h-100">
+                <div class="card-body">
+
+                    <!-- Logo -->
+                    <div class="auth-brand text-center text-lg-left">
+                        <a href="index.html" class="logo-dark">
+                            <span><img src="assets/images/logo-dark.png" alt="" height="18"></span>
+                        </a>
+                        <a href="index.html" class="logo-light">
+                            <span><img src="assets/images/logo.png" alt="" height="18"></span>
+                        </a>
+                    </div>
+
+                    <!-- title-->
+                    <h4 class="mt-0">Free Sign Up</h4>
+                    <p class="text-muted mb-4">Don't have an account? Create your account, it takes less than a minute
+                    </p>
+
+                    <!-- form -->
+                    <form action="#">
+                        <div class="form-group">
+                            <label for="fullname">Full Name</label>
+                            <input class="form-control" type="text" id="fullname" placeholder="Enter your name"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email address</label>
+                            <input class="form-control" type="email" id="email" required placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input class="form-control" type="password" required id="password"
+                                placeholder="Enter your password">
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="checkbox-signup">
+                                <label class="custom-control-label" for="checkbox-signup">I accept <a
+                                        href="javascript: void(0);" class="text-muted">Terms and Conditions</a></label>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0 text-center">
+                            <button class="btn btn-primary btn-block" type="submit"><i class="mdi mdi-account-circle"
+                                    id="quickstart-sign-up" name="signup"></i>> Sign Up </button>
+                        </div>
+                        <!-- social-->
+                        <div class="text-center mt-4">
+                            <p class="text-muted font-16">Sign up using</p>
+                            <ul class="social-list list-inline mt-3">
+                                <li class="list-inline-item">
+                                    <a href="javascript: void(0);"
+                                        class="social-list-item border-primary text-primary"><i
+                                            class="mdi mdi-facebook"></i></a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+                                        <p>Sign in with your Google account below.</p>
+
+                                        <!-- Button that handles sign-in/sign-out -->
+                                        <button disabled class="mdl-button mdl-js-button mdl-button--raised"
+                                            id="quickstart-sign-in">Sign in with
+                                            Google</button>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="javascript: void(0);" class="social-list-item border-info text-info"><i
+                                            class="mdi mdi-twitter"></i></a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="javascript: void(0);"
+                                        class="social-list-item border-secondary text-secondary"><i
+                                            class="mdi mdi-github-circle"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                    <!-- end form-->
+
+                    <!-- Footer-->
+                    <footer class="footer footer-alt">
+                        <p class="text-muted">Already have account? <a href="pages-login-2.html"
+                                class="text-muted ml-1"><b>Log In</b></a></p>
+                    </footer>
+
+                </div> <!-- end .card-body -->
+            </div> <!-- end .align-items-center.d-flex.h-100-->
+        </div>
+        <!-- end auth-fluid-form-box-->
+
+        <!-- Auth fluid right content -->
+        <div class="auth-fluid-right text-center">
+            <div class="auth-user-testimonial">
+                <h2 class="mb-3">CS403 Group Project!</h2>
+                <p class="lead"><i class="mdi mdi-format-quote-open"></i> !
+                    <i class="mdi mdi-format-quote-close"></i>
+                </p>
+                <p>
+                    - CS403 Admin User
+                </p>
+            </div> <!-- end auth-user-testimonial-->
+        </div>
+        <!-- end Auth fluid right content -->
+    </div>
+    <!-- end auth-fluid-->
+
+    <!-- bundle -->
+    <script src="/__/firebase/7.15.5/firebase-app.js"></script>
+
+    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+    <script src="/__/firebase/7.15.5/firebase-analytics.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="/__/firebase/7.15.5/firebase-auth.js"></script>
+    <script src="/__/firebase/7.15.5/firebase-firestore.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/7.15.5/firebase-auth.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-database.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-storage.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+    <script src="node_modules/firebaseui/dist/firebaseui.js"></script>
+    <script src="scripts/main.js"></script>
+
+</body>
+
+</html>

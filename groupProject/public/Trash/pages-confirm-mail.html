@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Error 404 / CS403</title>
+    <title>Confirm Email | CS403 - Responsive Bootstrap 4 Admin Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
@@ -13,6 +13,14 @@
     <!-- App css -->
     <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/app-creative.css" rel="stylesheet" type="text/css" id="light-style" />
+    <script defer src="/__/firebase/7.15.5/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/7.15.5/firebase-auth.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-database.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/7.15.5/firebase-storage.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
 
 
 </head>
@@ -32,20 +40,28 @@
                         </div>
 
                         <div class="card-body p-4">
-                            <div class="text-center">
-                                <h1 class="text-error">4<i class="mdi mdi-emoticon-sad"></i>4</h1>
-                                <h4 class="text-uppercase text-danger mt-3">Page Not Found</h4>
-                                <p class="text-muted mt-3">It's looking like you may have taken a wrong turn. Don't
-                                    worry... it
-                                    happens to the best of us. Here's a
-                                    little tip that might help you get back on track.</p>
 
-                                <a class="btn btn-info mt-3" href="index.html"><i class="mdi mdi-reply"></i> Return
-                                    Home</a>
+                            <div class="text-center m-auto">
+                                <img src="assets/images/mail_sent.svg" alt="mail sent image" height="64" />
+                                <h4 class="text-dark-50 text-center mt-4 font-weight-bold">Please check your email</h4>
+                                <p class="text-muted mb-4">
+                                    A email has been send to <b>youremail@domain.com</b>.
+                                    Please check for an email from company and click on the included link to
+                                    reset your password.
+                                </p>
                             </div>
+
+                            <form action="index.html">
+                                <div class="form-group mb-0 text-center">
+                                    <button class="btn btn-primary" type="submit"><i class="mdi mdi-home mr-1"></i> Back
+                                        to Home</button>
+                                </div>
+                            </form>
+
                         </div> <!-- end card-body-->
                     </div>
-                    <!-- end card -->
+                    <!-- end card-->
+
                 </div> <!-- end col -->
             </div>
             <!-- end row -->
@@ -55,7 +71,7 @@
     <!-- end page -->
 
     <footer class="footer footer-alt">
-        2018 - 2020 © CS403.com
+        2018 - 2020 © CS403 - CS403.com
     </footer>
 
     <!-- bundle -->
