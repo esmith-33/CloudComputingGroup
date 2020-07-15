@@ -1,5 +1,5 @@
-var UsersRef = firebasefirestore().collection('Users');
-
+var UsersRef = firebase.firestore().collection('Users');
+const db = firebase.firestore();
 var searchQuery = UsersRef.where('name', '>=', SearchInputElement);
 
 var SearchFormElement = document.getElementById('search-forms');
@@ -7,9 +7,7 @@ var SearchInputElement = document.getElementById('search-people');
 var SearchButtonElement = document.getElementById('submit-search');
 
 function searchPeople() {
-	firebase
-		.firestore()
-		.UsersRef.searchQuery()
+	searchQuery()
 		.get()
 		.then(function(querySnapshot) {
 			querySnapshot.forEach(function(doc) {
@@ -39,7 +37,6 @@ function toggleSearchButton() {
 	}
 }
 function displayUsers() {
-	firebase.firestore().ref('users');
 	usersRef.on('child_added', function(snapshot) {
 		// Create the HTML for a user.
 		var photoURL = snapshot.val().photoURL || 'assets/images/users/profile_placeholder.png';
