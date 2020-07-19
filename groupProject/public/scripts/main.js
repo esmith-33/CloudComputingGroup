@@ -32,6 +32,7 @@ window.onload = function() {
 	initApp();
 };
 
+
 // Initiate Firebase Auth.
 function initFirebaseAuth() {
 	// Listen to auth state changes.
