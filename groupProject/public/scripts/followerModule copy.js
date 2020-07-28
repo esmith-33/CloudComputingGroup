@@ -1,5 +1,4 @@
-import { db } from './config';
-import * as firebase from 'firebase/app';
+
 const db = firebase.firestore();
 const remove = firebase.firestore.FieldValue.arrayRemove;
 const union = firebase.firestore.FieldValue.arrayUnion;

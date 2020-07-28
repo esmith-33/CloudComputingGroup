@@ -15,28 +15,14 @@
  */
 'use strict';
 
-// Initializes the Demo.
-function Demo() {
-	document.addEventListener(
-		'DOMContentLoaded',
-		function() {
-			// Shortcuts to DOM Elements.
+initFirebaseAuth();
 
-			this.nameContainer = document.getElementById('demo-name-container');
-			this.fcmErrorContainer = document.getElementById('demo-fcm-error-container');
-			this.usersContainer = document.getElementById('demo-all-users-list');
-			this.usersCard = document.getElementById('demo-all-users-card');
-			this.snackbar = document.getElementById('demo-snackbar');
-
-			// Bind events.
-			firebase.auth().onAuthStateChanged(this.onAuthStateChanged.bind(this));
-			firebase.messaging().onMessage(this.onMessage.bind(this));
-		}.bind(this)
-	);
-}
-
+var nameContainer = document.getElementById('demo-name-container');
+var usersContainer = document.getElementById('demo-all-users-list');
+var usersCard = document.getElementById('demo-all-users-card');
+var snackbar = document.getElementById('demo-snackbar');
 // Triggered on Firebase auth state change.
-Demo.prototype.onAuthStateChanged = function(user) {
+const loadPeople = function(user) {
 	// If this is just an ID token refresh we exit.
 	if (user && this.currentUid === user.uid) {
 		return;
@@ -51,29 +37,27 @@ Demo.prototype.onAuthStateChanged = function(user) {
 
 	// Adjust UI depending on user state.
 	if (user) {
-		this.nameContainer.innerText = user.displyName;
+		this.nameContainer.innerText = user.displayName;
 		this.usersCard.style.display = 'block';
 
 		this.saveToken();
 		this.displayAllUsers();
 		this.currentUid = user.uid;
 	} else {
-		this.usersCard.style.display = 'none';
-		this.usersContainer.innerHTML = '';
-		this.currentUid = '';
+		this.usersCard.style.display = 'block';
+		this.usersContainer.innerHTML = 'Hello World';
+		this.currentUid = 'Who';
 	}
 };
 
 // Display all users so that they can be followed.
-Demo.prototype.displayAllUsers = function() {
-	var usersRef = firebase.firestore().collection('Users').orderBy('name').limit(12);
-	usersRef.on(
-		'child_added',
-		function(snapshot) {
+function displayAllUsers() {
+	var usersRef = firebase.firestore().collection('Users').orderBy('name', 'desc').limit(12);
+	usersRef.onSnapshot(function(snapshot) {
 			// Create the HTML for a user.
-			var photoURL = snapshot.val().photoURL || 'assets/images/users/profile_placeholder.png';
-			var displayName = snapshot.val().displayName;
-			var uid = snapshot.key;
+			var photoURL = doc.data().photoURL || 'assets/images/users/profile_placeholder.png';
+			var displayName = doc.data().name;
+			var uid = doc.data().uid;
 			var userTemplate =
 				'<div class="demo-user-container">' +
 				'  <img class="demo-profile-pic" src="' +
@@ -105,22 +89,11 @@ Demo.prototype.displayAllUsers = function() {
 				componentHandler.upgradeElement(materialSwitchContainer);
 			}
 
-			// Check if the user has notifications enabled and show a flag if he has.
-			var notificationEnabledElement = userElement.getElementsByClassName('demo-notifications-enabled')[0];
-			var notificationsEnabledRef = snapshot.ref.child('notificationTokens');
-			notificationsEnabledRef.on('value', function(notificationsEnabledSnapshot) {
-				notificationEnabledElement.style.display = notificationsEnabledSnapshot.hasChildren()
-					? 'inline'
-					: 'none';
-			});
-			this.listeners.push(notificationsEnabledRef);
-
 			// Listen for the Switch state from the Realtime database.
 			var switchElement = document.getElementById('demo-follow-switch-' + uid);
 			var followUserRef = firebase.firestore().collection('followers/' + uid + '/' + this.currentUid);
-			this.listeners.push(followUserRef);
-			followUserRef.on('value', function(followSnapshot) {
-				switchElement.checked = !!followSnapshot.val();
+			followUserRef.onSnapshot('value', function(followSnapshot) {
+				switchElement.checked = !!followSnapshot.value();
 				if (materialSwitchContainer.MaterialSwitch) {
 					materialSwitchContainer.MaterialSwitch.checkDisabled();
 					materialSwitchContainer.MaterialSwitch.checkToggleState();
@@ -131,79 +104,12 @@ Demo.prototype.displayAllUsers = function() {
 			switchElement.addEventListener('change', function() {
 				followUserRef.set(!!switchElement.checked);
 			});
-		}.bind(this)
+		}.bind()
 	);
-	this.listeners.push(usersRef);
+
 };
 
-// This is called when a notification is received while the app is in focus.
-// When the app is not in focus or if the tab is closed, this function is not called and the FCM notifications is
-// handled by the Service worker which displays a browser popup notification if the browser supports it.
-Demo.prototype.onMessage = function(payload) {
-	console.log('Notifications received.', payload);
 
-	// Normally our Function sends a notification payload, we check just in case.
-	if (payload.notification) {
-		// If notifications are supported on this browser we display one.
-		// Note: This is for demo purposes only. For a good user experience it is not recommended to display browser
-		// notifications while the app is in focus. In a production app you probably want to only display some form of
-		// in-app notifications like the snackbar (see below).
-		if (window.Notification instanceof Function) {
-			// This displays a notification if notifications have been granted.
-			new Notification(payload.notification.title, payload.notification);
-		}
-		// Display the notification content in the Snackbar too.
-		this.snackbar.MaterialSnackbar.showSnackbar({ message: payload.notification.body });
-	}
-};
 
-// Saves the token to the database if available. If not request permissions.
-Demo.prototype.saveToken = function() {
-	firebase
-		.messaging()
-		.getToken()
-		.then(
-			function(currentToken) {
-				if (currentToken) {
-					firebase
-						.firestore()
-						.collection('users/' + this.currentUid + '/notificationTokens/' + currentToken)
-						.set(true);
-				} else {
-					this.requestPermission();
-				}
-			}.bind(this)
-		)
-		.catch(
-			function(err) {
-				console.error('Unable to get messaging token.', err);
-				if (err.code === 'messaging/permission-default') {
-					this.fcmErrorContainer.innerText =
-						'You have not enabled notifications on this browser. To enable notifications reload the page and allow notifications using the permission dialog.';
-				} else if (err.code === 'messaging/notifications-blocked') {
-					this.fcmErrorContainer.innerHTML =
-						'You have blocked notifications on this browser. To enable notifications follow these instructions: <a href="https://support.google.com/chrome/answer/114662?visit_id=1-636150657126357237-2267048771&rd=1&co=GENIE.Platform%3DAndroid&oco=1">Android Chrome Instructions</a><a href="https://support.google.com/chrome/answer/6148059">Desktop Chrome Instructions</a>';
-				}
-			}.bind(this)
-		);
-};
 
-// Requests permission to send notifications on this browser.
-Demo.prototype.requestPermission = function() {
-	console.log('Requesting permission...');
-	firebase
-		.messaging()
-		.requestPermission()
-		.then(
-			function() {
-				console.log('Notification permission granted.');
-				this.saveToken();
-			}.bind(this)
-		)
-		.catch(function(err) {
-			console.error('Unable to get permission to notify.', err);
-		});
-};
-
-// Load the demo.
-window.demo = new Demo();
+loadPeople();

@@ -1,21 +1,7 @@
-/**
- * Copyright 2018 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 'use strict';
 
-// Signs-in Friendly Chat.
+// Signs-in at.
 function signIn() {
 	// Sign into Firebase using popup auth & Google as the identity provider.
 	var provider = new firebase.auth.GoogleAuthProvider();
@@ -63,6 +49,8 @@ function saveFeed(FeedText) {
 			name: getUserName(),
 			text: FeedText,
 			profilePicUrl: getProfilePicUrl(),
+			author: firebase.auth().currentUser.uid,
+			email:firebase.auth().currentUser.email,
 			timestamp: firebase.firestore.FieldValue.serverTimestamp()
 		})
 		.catch(function(error) {
@@ -90,29 +78,8 @@ function saveUsers() {
 		});
 }
 
-// Loads chat Feeds history and listens for upcoming ones.
-function loadFeeds() {
-	// Create the query to load the last 12 Feeds and listen for new ones.
-	var query = firebase.firestore().collection('Feeds').orderBy('timestamp', 'desc').limit(12);
+// Loads chat Feeds history and listens for upcoming ones
 
-	// Start listening to the query.
-	query.onSnapshot(function(snapshot) {
-		snapshot.docChanges().forEach(function(change) {
-			if (change.type === 'removed') {
-				deleteFeed(change.doc.id);
-			} else {
-				var Feed = change.doc.data();
-				displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
-			}
-		});
-	});
-}
-firebase.firestore().collection('Users').get().then((querySnapshot) => {
-	querySnapshot.forEach((doc) => {
-		console.log(`Profile Updated`);
-	});
-	saveUsers();
-});
 
 // Saves a new Feed containing an image in Firebase.
 // This first saves the image in Firebase storage.
@@ -145,7 +112,6 @@ function saveImageFeed(file) {
 			console.error('There was an error uploading a file to Cloud Storage:', error);
 		});
 }
-
 // Saves the messaging device token to the datastore.
 function saveMessagingDeviceToken() {
 	firebase
@@ -298,6 +264,7 @@ function addSizeToGoogleProfilePic(url) {
 }
 
 // A loading image URL.
+
 var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
 
 // Delete a Feed from the UI.
@@ -381,7 +348,6 @@ function displayFeed(id, timestamp, name, text, picUrl, imageUrl) {
 	FeedListElement.scrollTop = FeedListElement.scrollHeight;
 	FeedInputElement.focus();
 }
-
 // Enables or disables the submit button depending on the values of the input
 // fields.
 function toggleButton() {
@@ -392,22 +358,9 @@ function toggleButton() {
 	}
 }
 
-// Checks that the Firebase SDK has been correctly setup and configured This will be deleted.
-function checkSetup() {
-	if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
-		window.alert(
-			'You have not configured and imported the Firebase SDK. ' +
-				'Make sure you go through the codelab setup instructions and make ' +
-				'sure you are running the codelab using `firebase serve`'
-		);
-	}
-}
-
-// Checks that Firebase has been imported.
-checkSetup();
-
 // Shortcuts to DOM Elements.
 var FeedListElement = document.getElementById('Feeds');
+var FeedListElement = document.getElementById('NewsFeeds');
 var FeedFormElement = document.getElementById('Feed-forms');
 var FeedInputElement = document.getElementById('Feed');
 var submitButtonElement = document.getElementById('submit');
@@ -419,7 +372,8 @@ var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
-var usersContainer = document.getElementById('demo-all-users-list');
+
+
 
 // Saves Feed on form submit.
 FeedFormElement.addEventListener('submit', onFeedFormSubmit);
@@ -443,5 +397,5 @@ initFirebaseAuth();
 // TODO: Initialize Firebase Performance Monitoring.
 firebase.performance();
 
-// We load currently existing chat Feeds and listen to new ones.
-loadFeeds();
+
+
