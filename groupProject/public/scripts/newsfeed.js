@@ -1,12 +1,13 @@
 
 'use strict';
 
-initFirebaseAuth();
+
+
 // Loads chat Feeds history and listens for upcoming ones.
 function loadNewsFeeds() {
 	// Create the query to load the last 12 Feeds and listen for new ones.
 	var query = firebase.firestore().collection('Feeds').orderBy('timestamp', 'desc').limit(12);
-
+	
 	// Start listening to the query.
 	query.onSnapshot(function(snapshot) {
 		snapshot.docChanges().forEach(function(change) {
@@ -101,7 +102,7 @@ var FeedInputElement = document.getElementById('Feed');
 var submitButtonElement = document.getElementById('submit');
 var imageButtonElement = document.getElementById('submitImages');
 var imageFormElement = document.getElementById('image-forms');
-var mediaCapturesElement = document.getElementById('mediaCaptures');
+var mediaCaptureElement = document.getElementById('mediaCapture');
 var userPicElement = document.getElementById('user-pic');
 var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');

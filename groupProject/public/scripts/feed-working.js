@@ -14,9 +14,9 @@ function signOut() {
 	firebase.auth().signOut();
 }
 
-window.onload = function() {
-	initApp();
-};
+// window.onload = function() {
+// 	initApp();
+// };
 
 // Initiate Firebase Auth.
 function initFirebaseAuth() {
@@ -60,23 +60,40 @@ function saveFeed(FeedText) {
 function saveUsers() {
 	// Add a new User entry to the database.
 	var email = firebase.auth().currentUser.email;
+	if (checkSignedInWithFeed()) {
+		return firebase
+			.firestore()
+			.collection('Users')
+			.doc(email)
+			.update({
+				name: getUserName(),
 
-	return firebase
-		.firestore()
-		.collection('Users')
-		.doc(email)
-		.set({
+				email: firebase.auth().currentUser.email,
+
+				profilePicUrl: getProfilePicUrl(),
+				timestamp: firebase.firestore.FieldValue.serverTimestamp()
+			})
+			.catch(function (error) {
+				console.error('Error writing new User to database', error);
+			});
+	}
+	else {
+		return firebase.firesotre().collection('Users').doc(email).add({
 			name: getUserName(),
 
-			email: firebase.auth().currentUser.email,
+				email: firebase.auth().currentUser.email,
 
-			profilePicUrl: getProfilePicUrl(),
-			timestamp: firebase.firestore.FieldValue.serverTimestamp()
-		})
-		.catch(function(error) {
-			console.error('Error writing new User to database', error);
-		});
-}
+				profilePicUrl: getProfilePicUrl(),
+				timestamp: firebase.firestore.FieldValue.serverTimestamp()
+			})
+			.catch(function (error) {
+				console.error('Error writing new User to database', error);
+			});
+		}
+		
+	}
+	
+
 
 // Loads chat Feeds history and listens for upcoming ones
 
@@ -221,6 +238,22 @@ function authStateObserver(user) {
 	}
 }
 
+function followButton (followB) {
+	if (followB) {
+
+		unFollowButtonElement.removeAttribute('hidden');
+
+		// Hide follow button.
+		followButtonElement.setAttribute('hidden', 'true');
+
+	} else {
+		
+		unFollowButtonElement.setAttribute('hidden', 'true');
+
+		// Show follow button.
+		followButtonElement.removeAttribute('hidden');
+	}
+}
 // Returns true if user is signed-in. Otherwise false and displays a Feed.
 function checkSignedInWithFeed() {
 	// Return true if the user is signed in Firebase
@@ -250,7 +283,13 @@ var Feed_TEMPLATE =
 	'<div class="name"></div></div></div>' +
 	'<div><p class="Feed" font-16 text-center font-italic text-dark></p></div>' +
 	'<div class="my-1"><div class="btn btn-sm btn-link text-muted pl-0">' +
-	'<i class="mdi mdi-heart text-danger "></i>Like &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
+	'<span><button id="follow" type="submit" class="btn btn-sm btn-primary waves-effect">'+
+	'Follow</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
+	'<span><button hidden id="unfollow" type="submit" class="btn btn-sm btn-primary waves-effect">'+
+	'UnFollow</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
+	'<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'+
+	'<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'+
+	'<i class="mdi mdi-heart text-danger "></i>Like&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
 	'<i class="uil uil-comments - alt"></i>Comment &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
 	'<i class ="uil uil-share-alt"></i> Share &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
 	'</div>';
@@ -274,6 +313,23 @@ function deleteFeed(id) {
 	if (div) {
 		div.parentNode.removeChild(div);
 	}
+}
+// Loads chat Feeds history and listens for upcoming ones.
+function loadNewsFeeds() {
+	// Create the query to load the last 12 Feeds and listen for new ones.
+	var query = firebase.firestore().collection('Feeds').orderBy('timestamp', 'desc').limit(12);
+	
+	// Start listening to the query.
+	query.onSnapshot(function(snapshot) {
+		snapshot.docChanges().forEach(function(change) {
+			if (change.type === 'removed') {
+				deleteFeed(change.doc.id);
+			} else {
+				var Feed = change.doc.data();
+				displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
+			}
+		});
+	});
 }
 
 function createAndInsertFeed(id, timestamp) {
@@ -357,6 +413,19 @@ function toggleButton() {
 		submitButtonElement.setAttribute('disabled', 'true');
 	}
 }
+const db = firebase.firestore();
+const remove = firebase.firestore.FieldValue.arrayRemove;
+const union = firebase.firestore.FieldValue.arrayUnion;
+const follow  = (followed, follower) => {
+    const followersRef = db.collection('followers').doc(followed);
+
+   followersRef.update({ Users: union(follower) });
+}
+export const unfollow  = (followed, follower) => {
+    const followersRef = db.collection('followers').doc(followed);
+
+    followersRef.update({ users: remove(follower) });
+}
 
 // Shortcuts to DOM Elements.
 var FeedListElement = document.getElementById('Feeds');
@@ -371,6 +440,8 @@ var userPicElement = document.getElementById('user-pic');
 var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
+var followButtonElement = document.getElementById('follow');
+var unFollowButtonElement = document.getElementById('unfollow');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
 
 
@@ -380,6 +451,8 @@ FeedFormElement.addEventListener('submit', onFeedFormSubmit);
 signOutButtonElement.addEventListener('click', signOut);
 signInButtonElement.addEventListener('click', signIn);
 
+unFollowButtonElement.addEventListener('click', unFollow);
+followButtonElement.addEventListener('click', follow);
 // Toggle for the button.
 FeedInputElement.addEventListener('keyup', toggleButton);
 FeedInputElement.addEventListener('change', toggleButton);

@@ -3,7 +3,7 @@ const db = firebase.firestore();
 const remove = firebase.firestore.FieldValue.arrayRemove;
 const union = firebase.firestore.FieldValue.arrayUnion;
 
-export const follow  = (followed, follower) => {
+const follow  = (followed, follower) => {
     const followersRef = db.collection('followers').doc(followed);
 
    followersRef.update({ users: union(follower) });
@@ -21,19 +21,19 @@ export const unfollow  = (followed, follower) => {
 
 // 3. Get posts of followers
 
-export const getFeed = async () => {
-
+const getFeed = async () => {
+	var email = firebase.auth().currentUser.email;
 	const followedUsers = await db.collection('followers')
-		.where('users', 'array-contains', 'jeffd23')
-		.orderBy('lastPost', 'desc')
+		.where('Users', 'array-contains', (email))
+		.orderBy('Feeds', 'desc')
 		.limit(10)
 		.get();
 
 
 	const data = followedUsers.docs.map(doc => doc.data());
 
-	const posts = data.reduce((acc, cur) => acc.concat(cur.recentPosts), []);
+	const Feeds = data.reduce((acc, cur) => acc.concat(cur.recentPosts), []);
  
 
-	const sortedPosts = posts.sort((a, b) => b.published - a.published)
+	const sortedFeeds = Feeds.sort((a, b) => b.published - a.published)
 }

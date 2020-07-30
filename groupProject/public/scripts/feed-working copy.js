@@ -60,31 +60,43 @@ function saveFeed(FeedText) {
 function saveUsers() {
 	// Add a new User entry to the database.
 	var email = firebase.auth().currentUser.email;
+	if (checkSignedInWithFeed()) {
+		return firebase
+			.firestore()
+			.collection('Users')
+			.doc(email)
+			.update({
+				name: getUserName(),
 
-	return firebase
-		.firestore()
-		.collection('Users')
-		.doc(email)
-		.set({
+				email: firebase.auth().currentUser.email,
+
+				profilePicUrl: getProfilePicUrl(),
+				timestamp: firebase.firestore.FieldValue.serverTimestamp()
+			})
+			.catch(function (error) {
+				console.error('Error writing new User to database', error);
+			});
+	}
+	else {
+		return firebase.firesotre().collection('Users').doc(email).add({
 			name: getUserName(),
 
-			email: firebase.auth().currentUser.email,
+				email: firebase.auth().currentUser.email,
 
-			profilePicUrl: getProfilePicUrl(),
-			timestamp: firebase.firestore.FieldValue.serverTimestamp()
-		})
-		.catch(function(error) {
-			console.error('Error writing new User to database', error);
-		});
-}
+				profilePicUrl: getProfilePicUrl(),
+				timestamp: firebase.firestore.FieldValue.serverTimestamp()
+			})
+			.catch(function (error) {
+				console.error('Error writing new User to database', error);
+			});
+		}
+		
+	}
+	
+
 
 // Loads chat Feeds history and listens for upcoming ones
-firebase.firestore().collection('Users').get().then((querySnapshot) => {
-	querySnapshot.forEach((doc) => {
-		console.log(`Profile Updated`);
-	});
-	saveUsers();
-});
+
 
 // Saves a new Feed containing an image in Firebase.
 // This first saves the image in Firebase storage.
@@ -117,7 +129,44 @@ function saveImageFeed(file) {
 			console.error('There was an error uploading a file to Cloud Storage:', error);
 		});
 }
+// Saves the messaging device token to the datastore.
+function saveMessagingDeviceToken() {
+	firebase
+		.messaging()
+		.getToken()
+		.then(function(currentToken) {
+			if (currentToken) {
+				console.log('Got FCM device token:', currentToken);
+				// Saving the Device Token to the datastore.
+				firebase
+					.firestore()
+					.collection('fcmTokens')
+					.doc(currentToken)
+					.set({ uid: firebase.auth().currentUser.uid });
+			} else {
+				// Need to request permissions to show notifications.
+				requestNotificationsPermissions();
+			}
+		})
+		.catch(function(error) {
+			console.error('Unable to get messaging token.', error);
+		});
+}
 
+// Requests permission to show notifications.
+function requestNotificationsPermissions() {
+	console.log('Requesting notifications permission...');
+	firebase
+		.messaging()
+		.requestPermission()
+		.then(function() {
+			// Notification permission granted.
+			saveMessagingDeviceToken();
+		})
+		.catch(function(error) {
+			console.error('Unable to get permission to notify.', error);
+		});
+}
 
 // Triggered when a file is selected via the media picker.
 function onMediaFileSelected(event) {
@@ -218,7 +267,11 @@ var Feed_TEMPLATE =
 	'<div class="name"></div></div></div>' +
 	'<div><p class="Feed" font-16 text-center font-italic text-dark></p></div>' +
 	'<div class="my-1"><div class="btn btn-sm btn-link text-muted pl-0">' +
-	'<i class="mdi mdi-heart text-danger "></i>Like &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
+	'<span><button type="submit submit-feed-image" class="btn btn-sm btn-primary waves-effect">'+
+	'Follow</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
+	'<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'+
+	'<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'+
+	'<i class="mdi mdi-heart text-danger "></i>Like&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
 	'<i class="uil uil-comments - alt"></i>Comment &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
 	'<i class ="uil uil-share-alt"></i> Share &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
 	'</div>';
@@ -232,6 +285,7 @@ function addSizeToGoogleProfilePic(url) {
 }
 
 // A loading image URL.
+
 var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
 
 // Delete a Feed from the UI.
@@ -325,7 +379,6 @@ function toggleButton() {
 	}
 }
 
-
 // Shortcuts to DOM Elements.
 var FeedListElement = document.getElementById('Feeds');
 var FeedListElement = document.getElementById('NewsFeeds');
@@ -340,7 +393,7 @@ var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
-var usersContainer = document.getElementById('demo-all-users-list');
+
 
 
 // Saves Feed on form submit.
@@ -364,5 +417,6 @@ initFirebaseAuth();
 
 // TODO: Initialize Firebase Performance Monitoring.
 firebase.performance();
+
 
 

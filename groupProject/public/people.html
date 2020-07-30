@@ -140,14 +140,14 @@
 
 
               <!--Start Timeline!!!!!!!!!!! -->
-              <div id="users">
+              <div id="timeline">
                 <div class="border rounded mt-2 mb-3">
 
                   <!-- MessagFes container https://firebase.google.com/docs/firestore/solutions/counters -->
 
 
-                  <form id="user-form" action="#" class="comment-area-box">
-                    <textarea rows="3" class="form-control border-0 resize-none" type="text" id="user"
+                  <form id="Feed-forms" action="#" class="comment-area-box">
+                    <textarea rows="3" class="form-control border-0 resize-none" type="text" id="Feed"
                       autocomplete="off" placeholder="Write something...."></textarea>
                     <div class="p-2 bg-light d-flex justify-content-between align-items-center">
                       <div>
@@ -155,9 +155,9 @@
 
 
 
-                        <form id="image-form" action="#">
-                          <input hidden id="mediaCapture" type="file" accept="image/*" capture="camera">
-                          <button id="submitImage" title="Add an image" class="btn btn-sm px-2 font-16 btn-light">
+                        <form id="image-forms" action="#">
+                          <input hidden id="mediaCaptures" type="file" accept="image/*" capture="camera">
+                          <button id="submitImages" title="Add an image" class="btn btn-sm px-2 font-16 btn-light">
                             <i class="mdi mdi-camera"></i>
                           </button>
                         </form>
@@ -169,7 +169,7 @@
                       </button>
                     </div>
                   </form>
-                  <div id="users"></div>
+                  <div id="NewsFeeds"></div>
 
                 </div>
               </div>
@@ -194,8 +194,8 @@
     <script src="/__/firebase/7.15.4/firebase-analytics.js"></script>
     <script src="/__/firebase/init.js"></script>
 
-
-
+    <script src="scripts/feed-working.js"></script>
+    <script src="scripts/people.js"></script>
 
 
 
@@ -203,7 +203,6 @@
 
     <script src="assets/js/app.min.js"></script>
 
-    <script src="scripts/users.js"></script>
 
 
 
