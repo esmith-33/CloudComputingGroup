@@ -154,14 +154,14 @@
 
                     <div class="p-2 bg-light d-flex justify-content-between align-items-center">
                       <div>
+                        <button id="submit" class="btn btn-sm btn-dark waves-effect">Post
+                        </button>
                         <form id="image-forms" action="#">
                           <input id="mediaCapture" type="file" accept="image/*" capture="camera">
                           <button id="submitImage" title="Add an image" class="btn btn-sm px-2 font-16 btn-light">
                             <i class="mdi mdi-camera"></i>
                           </button>
                         </form>
-                        <button id="submit" class="btn btn-sm btn-dark waves-effect">Post
-                        </button>
                   </form>
                 </div>
               </div>
@@ -466,7 +466,7 @@
     // Resets the given MaterialTextField.
     function resetMaterialTextfield(element) {
       element.value = '';
-      element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
+      //element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
     }
 
     // Template for Feeds.
