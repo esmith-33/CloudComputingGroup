@@ -285,7 +285,9 @@
       }
 
     }
-
+    function getUserEmail() {
+      return firebase.auth().currentUser.email;
+    }
 
 
     // Loads chat Feeds history and listens for upcoming ones
@@ -416,6 +418,7 @@
 
         // Hide sign-in button.
         signInButtonElement.setAttribute('hidden', 'true');
+        loadNewsFeeds();
 
         // We save the Firebase Messaging Device token and enable notifications.
         //saveMessagingDeviceToken();
@@ -476,6 +479,8 @@
       '<div class="name"></div></div></div>' +
       '<div><p class="Feed" font-16 text-center font-italic text-dark></p></div>' +
       '<div class="my-1"><div class="btn btn-sm btn-link text-muted pl-0">' +
+      '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
+      '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
       '<i class="mdi mdi-heart text-danger "></i>Like&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
       '<i class="uil uil-comments - alt"></i>Comment &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
       '<i class ="uil uil-share-alt"></i> Share &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
@@ -503,22 +508,36 @@
     }
     // Loads chat Feeds history and listens for upcoming ones.
     function loadNewsFeeds() {
-      // Create the query to load the last 12 Feeds and listen for new ones.
-      var query = firebase.firestore().collection('Feeds').orderBy('timestamp', 'desc').limit(12);
+      firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+          // Create the query to load the last 12 Feeds and listen for new ones.
+          var query = firebase.firestore().collection('followers').where('Users', 'array-contains', firebase.auth().currentUser.email)
+            .orderBy('lastPost', 'desc').limit(10);
 
-      // Start listening to the query.
-      query.onSnapshot(function (snapshot) {
-        snapshot.docChanges().forEach(function (change) {
-          if (change.type === 'removed') {
-            deleteFeed(change.doc.id);
-          } else {
-            var Feed = change.doc.data();
-            displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
-          }
-        });
-      });
+          // Start listening to the query.
+          query.onSnapshot(function (snapshot) {
+            snapshot.docChanges().forEach(function (change) {
+              if (change.type === 'removed') {
+                deleteFeed(change.doc.id);
+              } else {
+                const data = followedUsers.docs.map(doc => doc.data());
+
+                const posts = data.reduce((acc, cur) => acc.concat(cur.recentPosts), []);
+
+
+                const sortedPosts = posts.sort((a, b) => b.published - a.published)
+                //var Feed = change.doc.data();
+                displayFeed(change.doc.id, sortedPosts.timestamp, sortedPosts.name, sortedPosts.text, sortedPosts.profilePicUrl, sortedPosts.imageUrl);
+              }
+            });
+          });
+
+        } else {
+          console.log('something went wrong');
+
+        }
+      })
     }
-
     function createAndInsertFeed(id, timestamp) {
       const container = document.createElement('div');
       container.innerHTML = Feed_TEMPLATE;
@@ -600,6 +619,19 @@
         submitButtonElement.setAttribute('disabled', 'true');
       }
     }
+    const db = firebase.firestore();
+    const remove = firebase.firestore.FieldValue.arrayRemove;
+    const union = firebase.firestore.FieldValue.arrayUnion;
+    const follow = (followed, follower) => {
+      const followersRef = db.collection('followed').collection(followers);
+
+      followersRef.update({ Users: union(followed) });
+    }
+    const unfollow = (followed, follower) => {
+      const followersRef = db.collection('followers').doc(followed);
+
+      followersRef.update({ users: remove(follower) });
+    }
 
     // Shortcuts to DOM Elements.
     var FeedListElement = document.getElementById('Feeds');
@@ -614,6 +646,8 @@
     var userNameElement = document.getElementById('user-name');
     var signInButtonElement = document.getElementById('sign-in');
     var signOutButtonElement = document.getElementById('sign-out');
+    var followButtonElement = document.getElementById('follow');
+    var unFollowButtonElement = document.getElementById('unfollow');
     var signInSnackbarElement = document.getElementById('must-signin-snackbar');
 
 
@@ -623,6 +657,8 @@
     signOutButtonElement.addEventListener('click', signOut);
     signInButtonElement.addEventListener('click', signIn);
 
+    //unFollowButtonElement.addEventListener('click', unFollow);
+    //followButtonElement.addEventListener('click', follow);
     // Toggle for the button.
     FeedInputElement.addEventListener('keyup', toggleButton);
     FeedInputElement.addEventListener('change', toggleButton);

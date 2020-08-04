@@ -226,9 +226,6 @@
     function getUserName() {
       return firebase.auth().currentUser.displayName;
     }
-    function getUserEmail() {
-      return firebase.auth().currentUser.email;
-    }
 
     // Returns true if a user is signed-in.
     function isUserSignedIn() {
@@ -253,31 +250,42 @@
           console.error('Error writing new Feed to database', error);
         });
     }
-    const auth = firebase.auth();
-    // function saveUsers(user) {
-    //   if (user) {
+    function saveUsers() {
+      // Add a new User entry to the database.
+      var email = firebase.auth().currentUser.email;
+      if (checkSignedInWithFeed()) {
+        return firebase
+          .firestore()
+          .collection('Users')
+          .doc(email)
+          .update({
+            name: getUserName(),
 
-    //     return firebase
-    //       .firestore()
-    //       .collection('Users')
-    //       .doc(getUserEmail())
-    //       .add({
-    //         name: getUserName(),
+            email: firebase.auth().currentUser.email,
 
-    //         email: auth.currentUser.email,
-    //         uid: auth.currentUser.uid,
-    //         profilePicUrl: getProfilePicUrl(),
-    //         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //         feeds: firebase.firestore().collection('Feeds')
+            profilePicUrl: getProfilePicUrl(),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          })
+          .catch(function (error) {
+            console.error('Error writing new User to database', error);
+          });
+      }
+      else {
+        return firebase.firesotre().collection('Users').doc(email).add({
+          name: getUserName(),
 
-    //       })
-    //       .catch(function (error) {
-    //         console.error('Error writing new User to database', error);
-    //       });
-    //   }
+          email: firebase.auth().currentUser.email,
 
-    // }
-    //saveUsers(auth.currentUser);
+          profilePicUrl: getProfilePicUrl(),
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+          .catch(function (error) {
+            console.error('Error writing new User to database', error);
+          });
+      }
+
+    }
+
 
 
     // Loads chat Feeds history and listens for upcoming ones
@@ -396,12 +404,11 @@
         // Get the signed-in user's profile pic and name.
         var profilePicUrl = getProfilePicUrl();
         var userName = getUserName();
-        var email = getUserEmail();
-        var uid = auth.currentUser.uid;
 
         // Set the user's profile pic and name.
         userPicElement.style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(profilePicUrl) + ')';
         userNameElement.textContent = userName;
+
         // Show user's profile and sign-out button.
         userNameElement.removeAttribute('hidden');
         userPicElement.removeAttribute('hidden');
@@ -409,18 +416,6 @@
 
         // Hide sign-in button.
         signInButtonElement.setAttribute('hidden', 'true');
-        firebase.firestore().collection('Users').doc(getUserEmail()).set({
-          name: getUserName(),
-          email: auth.currentUser.email,
-          uid: auth.currentUser.uid,
-          profilePicUrl: getProfilePicUrl(),
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          //feeds: .collection('Feeds')
-
-        })
-          .catch(function (error) {
-            console.error('Error writing new User to database', error);
-          });
 
         // We save the Firebase Messaging Device token and enable notifications.
         //saveMessagingDeviceToken();
@@ -529,26 +524,7 @@
         });
       });
     }
-    function loadFeeds() {
-      firebase.auth().onAuthStateChanged(function (user) {
-        if (user) {
-          var myUserId = firebase.auth().currentUser.uid;
-          var myFeed = firebase.firestore().collection('Feeds')
-            .where('author', '==', myUserId).orderBy('timestamp', 'desc').limit(12);
-          // Create the query to load the last 12 Feeds and listen for new ones.
-          myFeed.onSnapshot(function (snapshot) {
-            snapshot.docChanges().forEach(function (change) {
-              if (change.type === 'removed') {
-                deleteFeed(change.doc.id);
-              } else {
-                var Feed = change.doc.data();
-              }
-            });
-          });
-        }			// Start listening to the query.
-      });
 
-    }
     function createAndInsertFeed(id, timestamp) {
       const container = document.createElement('div');
       container.innerHTML = Feed_TEMPLATE;
