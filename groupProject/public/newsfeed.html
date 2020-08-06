@@ -635,16 +635,7 @@
     const db = firebase.firestore();
     const remove = firebase.firestore.FieldValue.arrayRemove;
     const union = firebase.firestore.FieldValue.arrayUnion;
-    const follow = (followed, follower) => {
-      const followersRef = db.collection('followers').doc(followed);
 
-      followersRef.update({ Users: union(follower) });
-    }
-    const unfollow = (followed, follower) => {
-      const followersRef = db.collection('followers').doc(followed);
-
-      followersRef.update({ users: remove(follower) });
-    }
 
     // Shortcuts to DOM Elements.
     var FeedListElement = document.getElementById('Feeds');

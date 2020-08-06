@@ -415,7 +415,7 @@
         li.setAttribute('data-id', doc.id);
         name.textContent = doc.data().name
         pic.innerHTML = '<div class="media"><div class="pic"></div><div>'
-        followMe.innerHTML = '<p><button type="submit" class="btn btn-sm btn-primary waves-effect">' +
+        followMe.innerHTML = '<p><button id="follow" type="submit" class="btn btn-sm btn-primary waves-effect">' +
           'Follow</button ></p>';
         unFollowMe.innerHTML = '<button type="submit" class="btn btn-sm btn-primary waves-effect">' +
           'UnFollow</button >';
@@ -440,7 +440,7 @@
           //let followUser = db.collection('Users').doc(id);
           //console.log(followUser);
           var thisUser = getUserEmail();
-          console.log(id);
+          //console.log(id);
           // followButtonElement.setAttribute('hidden', 'true');
 
           follow(id, thisUser);
@@ -448,7 +448,7 @@
 
         unFollowMe.addEventListener('click', (e) => {
           e.stopPropagation();
-          let id = (e).target.parentElement.parentElement.getAttribute('data-id');
+          let id = (e).target.parentElement.parentElement.parentElement.parentElement.getAttribute('data-id');
           //console.log(id);
           //let followUser = db.collection('Users').doc(id);
           //console.log(followUser);
@@ -462,29 +462,20 @@
       //   firebase.auth().onAuthStateChanged(function (follower) {
       //     var myEmail = firebase.auth().currentUser.email;
       //     var following = firebase.firestore().collection('followers')
-      //       .where('Users', '==', myEmail);
-      //     following.onSnapshot(function (snapshot) {
-      //       snapshot.docChanges().forEach(function (change) {
-      //         if (change.type === 'removed') {
-      //           unFollowButtonElement.removeAttribute('hidden');
-      //         } else {
-      //           followButtonElement.setAttribute('hidden', 'true');
-      //         }
-      //       });
+      //       .doc(firebase.auth().currentUser.email);
+      //     following.get().then(function (doc) {
+      //       if (doc.exists) {
+      //         console.log("Document data:", doc.data());
+      //       } else {
+      //         // doc.data() will be undefined in this case
+      //         console.log("No such document!");
+      //       }
+      //     }).catch(function (error) {
+      //       console.log("Error getting document:", error);
       //     });
-      //     if (following == true) {
-
-      //       unFollowButtonElement.removeAttribute('hidden');
-
-      //       // Hide follow button.
-      //       followButtonElement.setAttribute('hidden', 'true');
-
-      //     } //followButtonElement.removeAttribute('hidden');
       //   });
-
-      // }
+      // };
       // followButton();
-
       // Loads chat Feeds history and listens for upcoming ones.
       function loadUsers() {
         // Create the query to load the last 12 Feeds and listen for new ones.
@@ -508,14 +499,34 @@
         }
       }
 
-      function follow(followed, follower) {
+      function follow(follower, followed) {
         var followersRef = firebase.firestore().collection('followers').doc(followed);
-        //var latestPost = firebase.firestore().collection('followers').doc(followed).collection('Feeds').orderBy(followed, 'desc').limit(5);
+        //var followersRef = firebase.firestore().collection('followers').doc(firebase.auth().currentUser.email);
 
-
-
-        followersRef.update({ Users: union(follower) });
-
+        followersRef.set({ Users: union(follower) }, { merge: true });
+        //followersRef.set({ Users: union(follower) });
+        function followButton() {
+          firebase.auth().onAuthStateChanged(function (follower) {
+            var myEmail = firebase.auth().currentUser.email;
+            var following = firebase.firestore().collection('followers')
+              .doc(firebase.auth().currentUser.email);
+            following.get().then(function (doc) {
+              if (doc.exists) {
+                //console.log("Document data:", doc.data());
+                if (follower.email == myEmail) {
+                  //followButtonElement.setAttribute('hidden', 'true');
+                  //console.log(doc.data().name);
+                }
+              } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+              }
+            }).catch(function (error) {
+              console.log("Error getting document:", error);
+            });
+          });
+        };
+        followButton();
 
       }
 
