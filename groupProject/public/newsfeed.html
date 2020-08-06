@@ -249,6 +249,7 @@
         .catch(function (error) {
           console.error('Error writing new Feed to database', error);
         });
+      loadNewsFeeds();
     }
     function saveUsers() {
       // Add a new User entry to the database.
@@ -321,6 +322,7 @@
         .catch(function (error) {
           console.error('There was an error uploading a file to Cloud Storage:', error);
         });
+      loadNewsFeeds();
     }
     // Saves the messaging device token to the datastore.
     function saveMessagingDeviceToken() {
@@ -367,7 +369,7 @@
       var file = event.target.files[0];
 
       // Clear the selection in the file picker input.
-      imageFormElement.reset();
+      //imageFormElement.reset();
 
       // Check if the file is an image.
       if (!file.type.match('image.*')) {
@@ -382,6 +384,7 @@
       if (checkSignedInWithFeed()) {
         saveImageFeed(file);
       }
+      loadNewsFeeds();
     }
 
     // Triggered when the send new Feed form is submitted.
@@ -393,6 +396,7 @@
           // Clear Feed text field and re-enable the SEND button.
           resetMaterialTextfield(FeedInputElement);
           toggleButton();
+          loadNewsFeeds();
         });
       }
     }

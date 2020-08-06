@@ -390,6 +390,7 @@
       if (checkSignedInWithFeed()) {
         saveImageFeed(file);
       }
+      loadFeeds();
     }
 
     // Triggered when the send new Feed form is submitted.
@@ -403,6 +404,7 @@
           toggleButton();
         });
       }
+      loadFeeds();
     }
 
     // Triggers when the auth state change for instance when the user signs-in or signs-out.

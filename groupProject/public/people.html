@@ -501,10 +501,8 @@
 
       function follow(follower, followed) {
         var followersRef = firebase.firestore().collection('followers').doc(followed);
-        //var followersRef = firebase.firestore().collection('followers').doc(firebase.auth().currentUser.email);
-
         followersRef.set({ Users: union(follower) }, { merge: true });
-        //followersRef.set({ Users: union(follower) });
+
         function followButton() {
           firebase.auth().onAuthStateChanged(function (follower) {
             var myEmail = firebase.auth().currentUser.email;

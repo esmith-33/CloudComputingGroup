@@ -415,8 +415,6 @@
           uid: auth.currentUser.uid,
           profilePicUrl: getProfilePicUrl(),
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          //feeds: .collection('Feeds')
-
         })
           .catch(function (error) {
             console.error('Error writing new User to database', error);
