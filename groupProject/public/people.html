@@ -378,22 +378,7 @@
         }
       }
 
-      function followButton(followB) {
-        if (followB) {
 
-          unFollowButtonElement.removeAttribute('hidden');
-
-          // Hide follow button.
-          followButtonElement.setAttribute('hidden', 'true');
-
-        } else {
-
-          unFollowButtonElement.setAttribute('hidden', 'true');
-
-          // Show follow button.
-          followButtonElement.removeAttribute('hidden');
-        }
-      }
       // Returns true if user is signed-in. Otherwise false and displays a Feed.
       function checkSignedInWithFeed() {
         // Return true if the user is signed in Firebase
@@ -425,15 +410,20 @@
         let name = document.createElement('span');
         let pic = document.createElement('span');
         let followMe = document.createElement('div');
+        let unFollowMe = document.createElement('div');
         //let profilePicUrl = document.createElement('span');
         li.setAttribute('data-id', doc.id);
         name.textContent = doc.data().name
         pic.innerHTML = '<div class="media"><div class="pic"></div><div>'
-        followMe.innerHTML = '<button type="submit" class="btn btn-sm btn-primary waves-effect">' +
-          'Follow</button >';
+        followMe.innerHTML = '<p><button type="submit" class="btn btn-sm btn-primary waves-effect">' +
+          'Follow</button ></p>';
+        unFollowMe.innerHTML = '<button type="submit" class="btn btn-sm btn-primary waves-effect">' +
+          'UnFollow</button >';
+
         li.appendChild(name);
         li.appendChild(pic);
         li.appendChild(followMe);
+        li.appendChild(unFollowMe);
         li.appendChild(hr)
         //li.appendChild(hr)
         userListElement.appendChild(li);
@@ -442,18 +432,58 @@
         pic.querySelector('.pic').style.backgroundImage = 'url(' + (doc.data().profilePicUrl) + ')';
 
 
+
         followMe.addEventListener('click', (e) => {
+          e.stopPropagation();
+          let id = (e).target.parentElement.parentElement.parentElement.getAttribute('data-id');
+          //console.log(id);
+          //let followUser = db.collection('Users').doc(id);
+          //console.log(followUser);
+          var thisUser = getUserEmail();
+          console.log(id);
+          // followButtonElement.setAttribute('hidden', 'true');
+
+          follow(id, thisUser);
+        })
+
+        unFollowMe.addEventListener('click', (e) => {
           e.stopPropagation();
           let id = (e).target.parentElement.parentElement.getAttribute('data-id');
           //console.log(id);
           //let followUser = db.collection('Users').doc(id);
           //console.log(followUser);
           var thisUser = getUserEmail();
-          follow(id, thisUser);
+          unFollow(id, thisUser);
 
         })
 
       }
+      // function followButton() {
+      //   firebase.auth().onAuthStateChanged(function (follower) {
+      //     var myEmail = firebase.auth().currentUser.email;
+      //     var following = firebase.firestore().collection('followers')
+      //       .where('Users', '==', myEmail);
+      //     following.onSnapshot(function (snapshot) {
+      //       snapshot.docChanges().forEach(function (change) {
+      //         if (change.type === 'removed') {
+      //           unFollowButtonElement.removeAttribute('hidden');
+      //         } else {
+      //           followButtonElement.setAttribute('hidden', 'true');
+      //         }
+      //       });
+      //     });
+      //     if (following == true) {
+
+      //       unFollowButtonElement.removeAttribute('hidden');
+
+      //       // Hide follow button.
+      //       followButtonElement.setAttribute('hidden', 'true');
+
+      //     } //followButtonElement.removeAttribute('hidden');
+      //   });
+
+      // }
+      // followButton();
 
       // Loads chat Feeds history and listens for upcoming ones.
       function loadUsers() {
@@ -463,8 +493,6 @@
             displayUser(doc);
           })
         })
-
-
 
       }
 
@@ -482,11 +510,17 @@
 
       function follow(followed, follower) {
         var followersRef = firebase.firestore().collection('followers').doc(followed);
+        //var latestPost = firebase.firestore().collection('followers').doc(followed).collection('Feeds').orderBy(followed, 'desc').limit(5);
+
+
 
         followersRef.update({ Users: union(follower) });
+
+
       }
-      const unfollow = (followed, follower) => {
-        const followersRef = db.collection('followers').doc(followed);
+
+      function unfollow(followed, follower) {
+        const followersRef = firebase.firestore().collection('followers').doc(followed);
 
         followersRef.update({ Users: remove(follower) });
       }

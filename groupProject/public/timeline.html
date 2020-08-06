@@ -446,6 +446,7 @@
               uid: uid,
               profilePicUrl: photoUrl,
               timestamp: firebase.firestore.FieldValue.serverTimestamp()
+
             })
         }
       }
@@ -492,9 +493,9 @@
       function loadFeeds() {
         firebase.auth().onAuthStateChanged(function (user) {
           if (user) {
-            var myUserId = firebase.auth().currentUser.uid;
+            var myUserId = firebase.auth().currentUser.email;
             var myFeed = firebase.firestore().collection('Feeds')
-              .where('author', '==', myUserId).orderBy('timestamp', 'desc').limit(12);
+              .where('email', '==', myUserId).orderBy('timestamp', 'desc').limit(12);
             // Create the query to load the last 12 Feeds and listen for new ones.
             myFeed.onSnapshot(function (snapshot) {
               snapshot.docChanges().forEach(function (change) {

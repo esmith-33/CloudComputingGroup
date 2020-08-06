@@ -285,7 +285,9 @@
       }
 
     }
-
+    function getUserEmail() {
+      return firebase.auth().currentUser.email;
+    }
 
 
     // Loads chat Feeds history and listens for upcoming ones
@@ -416,6 +418,7 @@
 
         // Hide sign-in button.
         signInButtonElement.setAttribute('hidden', 'true');
+        loadNewsFeeds();
 
         // We save the Firebase Messaging Device token and enable notifications.
         //saveMessagingDeviceToken();
@@ -431,7 +434,22 @@
       }
     }
 
+    function followButton(followB) {
+      if (followB) {
 
+        unFollowButtonElement.removeAttribute('hidden');
+
+        // Hide follow button.
+        followButtonElement.setAttribute('hidden', 'true');
+
+      } else {
+
+        unFollowButtonElement.setAttribute('hidden', 'true');
+
+        // Show follow button.
+        followButtonElement.removeAttribute('hidden');
+      }
+    }
     // Returns true if user is signed-in. Otherwise false and displays a Feed.
     function checkSignedInWithFeed() {
       // Return true if the user is signed in Firebase
@@ -461,6 +479,8 @@
       '<div class="name"></div></div></div>' +
       '<div><p class="Feed" font-16 text-center font-italic text-dark></p></div>' +
       '<div class="my-1"><div class="btn btn-sm btn-link text-muted pl-0">' +
+      '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
+      '<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
       '<i class="mdi mdi-heart text-danger "></i>Like&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
       '<i class="uil uil-comments - alt"></i>Comment &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
       '<i class ="uil uil-share-alt"></i> Share &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
@@ -474,7 +494,6 @@
       return url;
     }
 
-
     // A loading image URL.
 
     var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
@@ -487,70 +506,38 @@
         div.parentNode.removeChild(div);
       }
     }
-    function loadNewsFeeds() {
-      // Create the query to load the last 12 Feeds and listen for new ones.
-      var query = firebase.firestore().collection('Feeds').orderBy('timestamp', 'desc').limit(12);
-
-      // Start listening to the query.
-      query.onSnapshot(function (snapshot) {
-        snapshot.docChanges().forEach(function (change) {
-          if (change.type === 'removed') {
-            deleteFeed(change.doc.id);
-          } else {
-            var Feed = change.doc.data();
-            displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
-          }
-        });
-      });
-    }
     // Loads chat Feeds history and listens for upcoming ones.
-    // function loadNewsFeeds() {
-    //   firebase.auth().onAuthStateChanged(function (user) {
-    //     if (user) {
-    //       var myUserId = firebase.auth().currentUser.email;
-    //       function latestFeeds() {
-    //         var myFeed = firebase.firestore().collection('Feeds')
-    //           .where('author', '==', myUserId).orderBy('timestamp', 'desc').limit(5);
+    function loadNewsFeeds() {
+      firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+          // Create the query to load the last 12 Feeds and listen for new ones.
+          var query = firebase.firestore().collection('followers').where('Users', 'array-contains', firebase.auth().currentUser.email)
+            .orderBy('lastPost', 'desc').limit(10);
+
+          // Start listening to the query.
+          query.onSnapshot(function (snapshot) {
+            snapshot.docChanges().forEach(function (change) {
+              if (change.type === 'removed') {
+                deleteFeed(change.doc.id);
+              } else {
+                const data = followedUsers.docs.map(doc => doc.data());
+
+                const posts = data.reduce((acc, cur) => acc.concat(cur.recentPosts), []);
 
 
-    //         firebase
-    //           .firestore()
-    //           .collection('followers')
-    //           .doc(myUserId)
-    //           .update({
-    //             latestFeeds: data,
+                const sortedPosts = posts.sort((a, b) => b.published - a.published)
+                //var Feed = change.doc.data();
+                displayFeed(change.doc.id, sortedPosts.timestamp, sortedPosts.name, sortedPosts.text, sortedPosts.profilePicUrl, sortedPosts.imageUrl);
+              }
+            });
+          });
 
-    //           })
-    //         console.log(myFeed);
-    //       }
-    //       latestFeeds();
+        } else {
+          console.log('something went wrong');
 
-    //       const sortedPosts = firebase.firestore().collection('followers')
-    //         .where('Users', 'array-contains', myUserId)
-    //         .orderBy('latestFeeds', 'desc')
-    //         .limit(10);
-
-    //       sortedPosts.onSnapshot(function (snapshot) {
-
-    //         console.log('test');
-    //         snapshot.docChanges().forEach(function (change) {
-    //           if (change.type === 'removed') {
-    //             deleteFeed(change.doc.id);
-    //           } else {
-    //             var Feed = change.doc.data();
-    //             displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
-    //           }
-    //         });
-    //       });
-
-    //       // render sortedPosts in DOM
-
-
-    //     }			// Start listening to the query.
-    //   });
-
-    // }
-
+        }
+      })
+    }
     function createAndInsertFeed(id, timestamp) {
       const container = document.createElement('div');
       container.innerHTML = Feed_TEMPLATE;
@@ -636,9 +623,9 @@
     const remove = firebase.firestore.FieldValue.arrayRemove;
     const union = firebase.firestore.FieldValue.arrayUnion;
     const follow = (followed, follower) => {
-      const followersRef = db.collection('followers').doc(followed);
+      const followersRef = db.collection('followed').collection(followers);
 
-      followersRef.update({ Users: union(follower) });
+      followersRef.update({ Users: union(followed) });
     }
     const unfollow = (followed, follower) => {
       const followersRef = db.collection('followers').doc(followed);
