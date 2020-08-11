@@ -1,0 +1,544 @@
+<!doctype html>
+<!--
+  Copyright 2015 Google Inc. All rights reserved.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      https://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Learn how to use the Firebase platform on the Web">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CS 403</title>
+
+  <!-- Disable tap highlight on IE -->
+  <meta name="msapplication-tap-highlight" content="no">
+
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Friendly Chat">
+  <meta name="theme-color" content="#303F9F">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Friendly Chat">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F">
+
+  <!-- Tile icon for Win8 -->
+  <meta name="msapplication-TileColor" content="#3372DF">
+  <meta name="msapplication-navbutton-color" content="#303F9F">
+
+  <!-- Material Design Lite -->
+  >
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+  <!-- App Styling -->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+  <link rel="stylesheet" href="styles/chat-copy.css">
+  <link rel="stylesheet" href="styles/chat.css">
+  <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
+  <link href="assets/css/app-creative.css" rel="stylesheet" type="text/css" id="light-style" />
+  <link rel="stylesheet" href="styles/followers.css">
+  <!-- Enable First Input Delay polyfill library. -->
+  <script
+    type="text/javascript">!function (n, e) { var t, o, i, c = [], f = { passive: !0, capture: !0 }, r = new Date, a = "pointerup", u = "pointercancel"; function p(n, c) { t || (t = c, o = n, i = new Date, w(e), s()) } function s() { o >= 0 && o < i - r && (c.forEach(function (n) { n(o, t) }), c = []) } function l(t) { if (t.cancelable) { var o = (t.timeStamp > 1e12 ? new Date : performance.now()) - t.timeStamp; "pointerdown" == t.type ? function (t, o) { function i() { p(t, o), r() } function c() { r() } function r() { e(a, i, f), e(u, c, f) } n(a, i, f), n(u, c, f) }(o, t) : p(o, t) } } function w(n) { ["click", "mousedown", "keydown", "touchstart", "pointerdown"].forEach(function (e) { n(e, l, f) }) } w(n), self.perfMetrics = self.perfMetrics || {}, self.perfMetrics.onFirstInputDelay = function (n) { c.push(n), s() } }(addEventListener, removeEventListener);</script>
+
+</head>
+
+<body>
+  <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+    <!-- Header section containing logo -->
+    <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
+      <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+        <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+
+        </div>
+        <div id="user-container">
+          <div hidden id="user-pic"></div>
+          <div hidden id="user-name"></div>
+          <button hidden id="sign-out" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
+            Sign-out
+          </button>
+          <button id="sign-in" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
+            <i class="material-icons">account_circle</i>Sign-in with Google
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+      <!-- Start Content-->
+      <!-- <div class="container-fluid"> -->
+
+
+      <!-- start page title -->
+
+      <div class="col-xl-8 col-lg-7">
+        <div class="page-title-box">
+
+          <h4 class="page-title">CS403 Group Project</h4>
+
+          <!-- This may be needed for starter page!!!!!!!!!!! -->
+          <ul class="nav nav-pills bg-nav-pills nav-justified mb-3">
+            <!-- This may be needed for starter page!!!!!!!!!!! -->
+
+            <li class="nav-item">
+              <a href="/timeline.html" aria-expanded="true" class="nav-link rounded-0">
+                Timeline
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/newsfeed.html" aria-expanded="true" class="nav-link rounded-0">
+                Feed
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/people.html" aria-expanded="false" class="nav-link rounded-0 active">
+                People
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/chat.html" aria-expanded="false" class="nav-link rounded-0">
+                Chat
+              </a>
+            </li>
+
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="col-xl-8 col-lg-7">
+
+
+
+
+
+        <main class="card">
+          <div class="card text-center">
+            <div class="card-body">
+
+
+
+
+              <!--Start Timeline!!!!!!!!!!! -->
+              <div id="timeline">
+
+              </div>
+              <!-- <div id="NewsFeeds"></div> -->
+
+
+              <div class="border border-light rounded p-2 mb-3">
+                <div class="media">
+                  <div class="pic"></div>
+                  <div class="media-body">
+                    <div class="name"></div>
+                  </div>
+                </div>
+                <div class="my-1">
+                  <ul id=user-list>
+
+                    <!-- <div class="btn btn-sm btn-link text-muted pl-0">
+                    <span><button id="follow" type="submit" class="btn btn-sm btn-primary waves-effect">
+                        Follow</button></span>
+                    <span><button hidden id="unfollow" type="submit" class="btn btn-sm btn-primary waves-effect">
+                        UnFollow</button></span> -->
+
+                </div>
+              </div>
+              </ul>
+            </div>
+
+
+
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Import and configure the Firebase SDK -->
+    <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
+    <!-- If you do not want to serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
+    <script src="/__/firebase/7.15.1/firebase-app.js"></script>
+    <script src="/__/firebase/7.15.1/firebase-auth.js"></script>
+    <script src="/__/firebase/7.15.1/firebase-storage.js"></script>
+    <script src="/__/firebase/7.15.1/firebase-messaging.js"></script>
+    <script src="/__/firebase/7.15.1/firebase-firestore.js"></script>
+    <script src="/__/firebase/7.15.1/firebase-performance.js"></script>
+    <script src="/__/firebase/7.15.4/firebase-analytics.js"></script>
+    <script src="/__/firebase/init.js"></script>
+
+    <script>
+
+      'use strict';
+      const db = firebase.firestore();
+      const remove = firebase.firestore.FieldValue.arrayRemove;
+      const union = firebase.firestore.FieldValue.arrayUnion;
+      // Signs-in at.
+      function signIn() {
+        // Sign into Firebase using popup auth & Google as the identity provider.
+        var provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider);
+      }
+
+      // Signs-out.
+      function signOut() {
+        // Sign out of Firebase.
+        firebase.auth().signOut();
+      }
+
+      // Initiate Firebase Auth.
+      function initFirebaseAuth() {
+        // Listen to auth state changes.
+        firebase.auth().onAuthStateChanged(authStateObserver);
+      }
+
+      // Returns the signed-in user's profile pic URL.
+      function getProfilePicUrl() {
+        return firebase.auth().currentUser.photoURL || 'assets/images/users/profile_placeholder.png';
+      }
+
+      // Returns the signed-in user's display name.
+      function getUserName() {
+        return firebase.auth().currentUser.displayName;
+      }
+
+      // Returns true if a user is signed-in.
+      function isUserSignedIn() {
+        return !!firebase.auth().currentUser;
+      }
+
+
+      function getUserEmail() {
+        return firebase.auth().currentUser.email;
+      }
+      function saveUsers() {
+        // Add a new User entry to the database.
+        var email = firebase.auth().currentUser.email;
+        if (checkSignedInWithFeed()) {
+          return firebase
+            .firestore()
+            .collection('Users')
+            .doc(email)
+            .update({
+              name: getUserName(),
+
+              email: firebase.auth().currentUser.email,
+
+              profilePicUrl: getProfilePicUrl(),
+              timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .catch(function (error) {
+              console.error('Error writing new User to database', error);
+            });
+        }
+        else {
+          return firebase.firesotre().collection('Users').doc(email).add({
+            name: getUserName(),
+
+            email: firebase.auth().currentUser.email,
+
+            profilePicUrl: getProfilePicUrl(),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          })
+            .catch(function (error) {
+              console.error('Error writing new User to database', error);
+            });
+        }
+
+      }
+
+
+
+      // Loads chat Feeds history and listens for upcoming ones
+
+
+      // Saves a new Feed containing an image in Firebase.
+      // This first saves the image in Firebase storage.
+      function saveImageFeed(file) {
+        // 1 - We add a Feed with a loading icon that will get updated with the shared image.
+        firebase
+          .firestore()
+          .collection('Feeds')
+          .add({
+            name: getUserName(),
+            imageUrl: LOADING_IMAGE_URL,
+            profilePicUrl: getProfilePicUrl(),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          })
+          .then(function (FeedRef) {
+            // 2 - Upload the image to Cloud Storage.
+            var filePath = firebase.auth().currentUser.uid + '/' + FeedRef.id + '/' + file.name;
+            return firebase.storage().ref(filePath).put(file).then(function (fileSnapshot) {
+              // 3 - Generate a public URL for the file.
+              return fileSnapshot.ref.getDownloadURL().then((url) => {
+                // 4 - Update the chat Feed placeholder with the image's URL.
+                return FeedRef.update({
+                  imageUrl: url,
+                  storageUri: fileSnapshot.metadata.fullPath
+                });
+              });
+            });
+          })
+          .catch(function (error) {
+            console.error('There was an error uploading a file to Cloud Storage:', error);
+          });
+      }
+      // Saves the messaging device token to the datastore.
+      function saveMessagingDeviceToken() {
+        firebase
+          .messaging()
+          .getToken()
+          .then(function (currentToken) {
+            if (currentToken) {
+              console.log('Got FCM device token:', currentToken);
+              // Saving the Device Token to the datastore.
+              firebase
+                .firestore()
+                .collection('fcmTokens')
+                .doc(currentToken)
+                .set({ uid: firebase.auth().currentUser.uid });
+            } else {
+              // Need to request permissions to show notifications.
+              requestNotificationsPermissions();
+            }
+          })
+          .catch(function (error) {
+            console.error('Unable to get messaging token.', error);
+          });
+      }
+
+      // Requests permission to show notifications.
+      function requestNotificationsPermissions() {
+        console.log('Requesting notifications permission...');
+        firebase
+          .messaging()
+          .requestPermission()
+          .then(function () {
+            // Notification permission granted.
+            saveMessagingDeviceToken();
+          })
+          .catch(function (error) {
+            console.error('Unable to get permission to notify.', error);
+          });
+      }
+
+
+
+
+      // Triggers when the auth state change for instance when the user signs-in or signs-out.
+      function authStateObserver(user) {
+        if (user) {
+          // User is signed in!
+          // Get the signed-in user's profile pic and name.
+          var profilePicUrl = getProfilePicUrl();
+          var userName = getUserName();
+
+          // Set the user's profile pic and name.
+          userPicElement.style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(profilePicUrl) + ')';
+          userNameElement.textContent = userName;
+
+          // Show user's profile and sign-out button.
+          userNameElement.removeAttribute('hidden');
+          userPicElement.removeAttribute('hidden');
+          signOutButtonElement.removeAttribute('hidden');
+
+          // Hide sign-in button.
+          signInButtonElement.setAttribute('hidden', 'true');
+
+          // We save the Firebase Messaging Device token and enable notifications.
+          //saveMessagingDeviceToken();
+        } else {
+          // User is signed out!
+          // Hide user's profile and sign-out button.
+          userNameElement.setAttribute('hidden', 'true');
+          userPicElement.setAttribute('hidden', 'true');
+          signOutButtonElement.setAttribute('hidden', 'true');
+
+          // Show sign-in button.
+          signInButtonElement.removeAttribute('hidden');
+        }
+      }
+
+      function followButton(followB) {
+        if (followB) {
+
+          unFollowButtonElement.removeAttribute('hidden');
+
+          // Hide follow button.
+          followButtonElement.setAttribute('hidden', 'true');
+
+        } else {
+
+          unFollowButtonElement.setAttribute('hidden', 'true');
+
+          // Show follow button.
+          followButtonElement.removeAttribute('hidden');
+        }
+      }
+      // Returns true if user is signed-in. Otherwise false and displays a Feed.
+      function checkSignedInWithFeed() {
+        // Return true if the user is signed in Firebase
+        if (isUserSignedIn()) {
+          return true;
+        }
+
+        // Display a message to the user using a Toast.
+        var data = {
+          message: 'You must sign-in first',
+          timeout: 2000
+        };
+        signInSnackbarElement.MaterialSnackbar.showSnackbar(data);
+        return false;
+      }
+
+      // Adds a size to Google Profile pics URLs.
+      function addSizeToGoogleProfilePic(url) {
+        if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
+          return url + '?sz=150';
+        }
+        return url;
+      }
+      var userListElement = document.querySelector('#user-list');
+      //create user element and render
+      function displayUser(doc) {
+        let li = document.createElement('li');
+        let hr = document.createElement('hr')
+        let name = document.createElement('span');
+        let pic = document.createElement('span');
+        let followMe = document.createElement('div');
+        //let profilePicUrl = document.createElement('span');
+        li.setAttribute('data-id', doc.id);
+        name.textContent = doc.data().name
+        pic.innerHTML = '<div class="media"><div class="pic"></div><div>'
+        followMe.innerHTML = '<button type="submit" class="btn btn-sm btn-primary waves-effect">' +
+          'Follow</button >';
+        li.appendChild(name);
+        li.appendChild(pic);
+        li.appendChild(followMe);
+        li.appendChild(hr)
+        //li.appendChild(hr)
+        userListElement.appendChild(li);
+
+
+        pic.querySelector('.pic').style.backgroundImage = 'url(' + (doc.data().profilePicUrl) + ')';
+
+
+        followMe.addEventListener('click', (e) => {
+          e.stopPropagation();
+          let id = (e).target.parentElement.parentElement.getAttribute('data-id');
+          //console.log(id);
+          //let followUser = db.collection('Users').doc(id);
+          //console.log(followUser);
+          var thisUser = getUserEmail();
+          console.log(thisUser);
+          console.log(id)
+
+          follow(id, thisUser);
+
+        })
+
+      }
+
+      // Loads chat Feeds history and listens for upcoming ones.
+      function loadUsers() {
+        // Create the query to load the last 12 Feeds and listen for new ones.
+        firebase.firestore().collection('Users').get().then((snapshot) => {
+          snapshot.docs.forEach(doc => {
+            displayUser(doc);
+          })
+        })
+
+
+
+      }
+
+      loadUsers();
+
+      // Enables or disables the submit button depending on the values of the input
+      // fields.
+      function toggleButton() {
+        if (FeedInputElement.value) {
+          submitButtonElement.removeAttribute('disabled');
+        } else {
+          submitButtonElement.setAttribute('disabled', 'true');
+        }
+      }
+
+      function follow(followed, follower) {
+        var followersRef = firebase.firestore().collection('followers').doc(followed);
+
+        followersRef.update({ Users: union(follower) });
+      }
+      const unfollow = (followed, follower) => {
+        const followersRef = db.collection('followers').doc(followed);
+
+        followersRef.update({ Users: remove(follower) });
+      }
+
+      // Shortcuts to DOM Elements.
+
+      var userPicElement = document.getElementById('user-pic');
+      var userNameElement = document.getElementById('user-name');
+      var signInButtonElement = document.getElementById('sign-in');
+      var signOutButtonElement = document.getElementById('sign-out');
+      var followButtonElement = document.getElementById('follow');
+      var unFollowButtonElement = document.getElementById('unfollow');
+      var signInSnackbarElement = document.getElementById('must-signin-snackbar');
+
+
+
+      // Saves Feed on form submit.
+
+      signOutButtonElement.addEventListener('click', signOut);
+      signInButtonElement.addEventListener('click', signIn);
+
+      //unFollowButtonElement.addEventListener('click', unFollow);
+      //followButtonElement.addEventListener('click', follow);
+      // Toggle for the button.
+
+
+
+
+      // initialize Firebase
+      initFirebaseAuth();
+
+      // TODO: Initialize Firebase Performance Monitoring.
+      firebase.performance();
+
+
+
+    //loadNewsFeeds();
+    </script>
+
+
+
+    <script src="assets/js/vendor.min.js"></script>
+
+    <script src="assets/js/app.min.js"></script>
+
+
+
+
+
+</body>
+
+</html>

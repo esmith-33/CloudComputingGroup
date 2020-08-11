@@ -1,21 +1,7 @@
-/**
- * Copyright 2018 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 'use strict';
 
-// Signs-in Friendly Chat.
+// Signs-in at.
 function signIn() {
 	// Sign into Firebase using popup auth & Google as the identity provider.
 	var provider = new firebase.auth.GoogleAuthProvider();
@@ -28,9 +14,9 @@ function signOut() {
 	firebase.auth().signOut();
 }
 
-window.onload = function() {
-	initApp();
-};
+// window.onload = function() {
+// 	initApp();
+// };
 
 // Initiate Firebase Auth.
 function initFirebaseAuth() {
@@ -63,6 +49,8 @@ function saveFeed(FeedText) {
 			name: getUserName(),
 			text: FeedText,
 			profilePicUrl: getProfilePicUrl(),
+			author: firebase.auth().currentUser.uid,
+			email:firebase.auth().currentUser.email,
 			timestamp: firebase.firestore.FieldValue.serverTimestamp()
 		})
 		.catch(function(error) {
@@ -72,47 +60,43 @@ function saveFeed(FeedText) {
 function saveUsers() {
 	// Add a new User entry to the database.
 	var email = firebase.auth().currentUser.email;
+	if (checkSignedInWithFeed()) {
+		return firebase
+			.firestore()
+			.collection('Users')
+			.doc(email)
+			.update({
+				name: getUserName(),
 
-	return firebase
-		.firestore()
-		.collection('Users')
-		.doc(email)
-		.set({
+				email: firebase.auth().currentUser.email,
+
+				profilePicUrl: getProfilePicUrl(),
+				timestamp: firebase.firestore.FieldValue.serverTimestamp()
+			})
+			.catch(function (error) {
+				console.error('Error writing new User to database', error);
+			});
+	}
+	else {
+		return firebase.firesotre().collection('Users').doc(email).add({
 			name: getUserName(),
 
-			email: firebase.auth().currentUser.email,
+				email: firebase.auth().currentUser.email,
 
-			profilePicUrl: getProfilePicUrl(),
-			timestamp: firebase.firestore.FieldValue.serverTimestamp()
-		})
-		.catch(function(error) {
-			console.error('Error writing new User to database', error);
-		});
-}
+				profilePicUrl: getProfilePicUrl(),
+				timestamp: firebase.firestore.FieldValue.serverTimestamp()
+			})
+			.catch(function (error) {
+				console.error('Error writing new User to database', error);
+			});
+		}
+		
+	}
+	
 
-// Loads chat Feeds history and listens for upcoming ones.
-function loadFeeds() {
-	// Create the query to load the last 12 Feeds and listen for new ones.
-	var query = firebase.firestore().collection('Feeds').orderBy('timestamp', 'desc').limit(12);
 
-	// Start listening to the query.
-	query.onSnapshot(function(snapshot) {
-		snapshot.docChanges().forEach(function(change) {
-			if (change.type === 'removed') {
-				deleteFeed(change.doc.id);
-			} else {
-				var Feed = change.doc.data();
-				displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
-			}
-		});
-	});
-}
-firebase.firestore().collection('Users').get().then((querySnapshot) => {
-	querySnapshot.forEach((doc) => {
-		console.log(`Profile Updated`);
-	});
-	saveUsers();
-});
+// Loads chat Feeds history and listens for upcoming ones
+
 
 // Saves a new Feed containing an image in Firebase.
 // This first saves the image in Firebase storage.
@@ -145,7 +129,6 @@ function saveImageFeed(file) {
 			console.error('There was an error uploading a file to Cloud Storage:', error);
 		});
 }
-
 // Saves the messaging device token to the datastore.
 function saveMessagingDeviceToken() {
 	firebase
@@ -255,6 +238,22 @@ function authStateObserver(user) {
 	}
 }
 
+function followButton (followB) {
+	if (followB) {
+
+		unFollowButtonElement.removeAttribute('hidden');
+
+		// Hide follow button.
+		followButtonElement.setAttribute('hidden', 'true');
+
+	} else {
+		
+		unFollowButtonElement.setAttribute('hidden', 'true');
+
+		// Show follow button.
+		followButtonElement.removeAttribute('hidden');
+	}
+}
 // Returns true if user is signed-in. Otherwise false and displays a Feed.
 function checkSignedInWithFeed() {
 	// Return true if the user is signed in Firebase
@@ -284,7 +283,13 @@ var Feed_TEMPLATE =
 	'<div class="name"></div></div></div>' +
 	'<div><p class="Feed" font-16 text-center font-italic text-dark></p></div>' +
 	'<div class="my-1"><div class="btn btn-sm btn-link text-muted pl-0">' +
-	'<i class="mdi mdi-heart text-danger "></i>Like &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
+	'<span><button id="follow" type="submit" class="btn btn-sm btn-primary waves-effect">'+
+	'Follow</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
+	'<span><button hidden id="unfollow" type="submit" class="btn btn-sm btn-primary waves-effect">'+
+	'UnFollow</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
+	'<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'+
+	'<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'+
+	'<i class="mdi mdi-heart text-danger "></i>Like&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
 	'<i class="uil uil-comments - alt"></i>Comment &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
 	'<i class ="uil uil-share-alt"></i> Share &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
 	'</div>';
@@ -298,6 +303,7 @@ function addSizeToGoogleProfilePic(url) {
 }
 
 // A loading image URL.
+
 var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
 
 // Delete a Feed from the UI.
@@ -307,6 +313,23 @@ function deleteFeed(id) {
 	if (div) {
 		div.parentNode.removeChild(div);
 	}
+}
+// Loads chat Feeds history and listens for upcoming ones.
+function loadNewsFeeds() {
+	// Create the query to load the last 12 Feeds and listen for new ones.
+	var query = firebase.firestore().collection('Feeds').orderBy('timestamp', 'desc').limit(12);
+	
+	// Start listening to the query.
+	query.onSnapshot(function(snapshot) {
+		snapshot.docChanges().forEach(function(change) {
+			if (change.type === 'removed') {
+				deleteFeed(change.doc.id);
+			} else {
+				var Feed = change.doc.data();
+				displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
+			}
+		});
+	});
 }
 
 function createAndInsertFeed(id, timestamp) {
@@ -381,7 +404,6 @@ function displayFeed(id, timestamp, name, text, picUrl, imageUrl) {
 	FeedListElement.scrollTop = FeedListElement.scrollHeight;
 	FeedInputElement.focus();
 }
-
 // Enables or disables the submit button depending on the values of the input
 // fields.
 function toggleButton() {
@@ -391,23 +413,23 @@ function toggleButton() {
 		submitButtonElement.setAttribute('disabled', 'true');
 	}
 }
+const db = firebase.firestore();
+const remove = firebase.firestore.FieldValue.arrayRemove;
+const union = firebase.firestore.FieldValue.arrayUnion;
+const follow  = (followed, follower) => {
+    const followersRef = db.collection('followers').doc(followed);
 
-// Checks that the Firebase SDK has been correctly setup and configured This will be deleted.
-function checkSetup() {
-	if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
-		window.alert(
-			'You have not configured and imported the Firebase SDK. ' +
-				'Make sure you go through the codelab setup instructions and make ' +
-				'sure you are running the codelab using `firebase serve`'
-		);
-	}
+   followersRef.update({ Users: union(follower) });
 }
+export const unfollow  = (followed, follower) => {
+    const followersRef = db.collection('followers').doc(followed);
 
-// Checks that Firebase has been imported.
-checkSetup();
+    followersRef.update({ users: remove(follower) });
+}
 
 // Shortcuts to DOM Elements.
 var FeedListElement = document.getElementById('Feeds');
+var FeedListElement = document.getElementById('NewsFeeds');
 var FeedFormElement = document.getElementById('Feed-forms');
 var FeedInputElement = document.getElementById('Feed');
 var submitButtonElement = document.getElementById('submit');
@@ -418,14 +440,19 @@ var userPicElement = document.getElementById('user-pic');
 var userNameElement = document.getElementById('user-name');
 var signInButtonElement = document.getElementById('sign-in');
 var signOutButtonElement = document.getElementById('sign-out');
+var followButtonElement = document.getElementById('follow');
+var unFollowButtonElement = document.getElementById('unfollow');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
-var usersContainer = document.getElementById('demo-all-users-list');
+
+
 
 // Saves Feed on form submit.
 FeedFormElement.addEventListener('submit', onFeedFormSubmit);
 signOutButtonElement.addEventListener('click', signOut);
 signInButtonElement.addEventListener('click', signIn);
 
+unFollowButtonElement.addEventListener('click', unFollow);
+followButtonElement.addEventListener('click', follow);
 // Toggle for the button.
 FeedInputElement.addEventListener('keyup', toggleButton);
 FeedInputElement.addEventListener('change', toggleButton);
@@ -443,5 +470,5 @@ initFirebaseAuth();
 // TODO: Initialize Firebase Performance Monitoring.
 firebase.performance();
 
-// We load currently existing chat Feeds and listen to new ones.
-loadFeeds();
+
+

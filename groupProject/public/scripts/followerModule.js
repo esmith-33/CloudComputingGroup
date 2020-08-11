@@ -1,38 +1,39 @@
-import { db } from './config';
-import * as firebase from 'firebase/app';
+'use strict';
 const db = firebase.firestore();
 const remove = firebase.firestore.FieldValue.arrayRemove;
 const union = firebase.firestore.FieldValue.arrayUnion;
 
-const follow = (followed, follower) => {
-	const followersRef = db.collection('followers').doc(followed);
+const follow  = (followed, follower) => {
+    const followersRef = db.collection('followers').doc(followed);
 
-	followersRef.update({ users: union(follower) });
-};
+   followersRef.update({ users: union(follower) });
+}
 
-// Unfollow User
+// 2. Unfollow User
 
-const unfollow = (followed, follower) => {
-	const followersRef = db.collection('followers').doc(followed);
+export const unfollow  = (followed, follower) => {
+    const followersRef = db.collection('followers').doc(followed);
 
-	followersRef.update({ users: remove(follower) });
-};
+    followersRef.update({ users: remove(follower) });
+}
 
-//  Get posts of followers
+
+
+// 3. Get posts of followers
 
 const getFeed = async () => {
-	const followedUsers = await db
-		.collection('followers')
-		.where('users', 'array-contains', searchQuery)
-		.orderBy('lastPost', 'desc')
+	var email = firebase.auth().currentUser.email;
+	const followedUsers = await db.collection('followers')
+		.where('Users', 'array-contains', (email))
+		.orderBy('Feeds', 'desc')
 		.limit(10)
 		.get();
 
-	const data = followedUsers.docs.map((doc) => doc.data());
 
-	const posts = data.reduce((acc, cur) => acc.concat(cur.recentPosts), []);
+	const data = followedUsers.docs.map(doc => doc.data());
 
-	const sortedPosts = posts.sort((a, b) => b.published - a.published);
+	const Feeds = data.reduce((acc, cur) => acc.concat(cur.recentPosts), []);
+ 
 
-	//render sortedPosts in DOM
-};
+	const sortedFeeds = Feeds.sort((a, b) => b.published - a.published)
+}
