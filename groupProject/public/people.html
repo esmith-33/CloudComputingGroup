@@ -415,9 +415,9 @@
         li.setAttribute('data-id', doc.id);
         name.textContent = doc.data().name;
         pic.innerHTML = '<div class="media"><div class="pic"></div><div>'
-        followMe.innerHTML = '<p><button id="follow'+doc.id+'" type="submit" class="btn btn-sm btn-primary waves-effect">' +
+        followMe.innerHTML = '<p><button id="follow' + doc.id + '" type="submit" class="btn btn-sm btn-primary waves-effect">' +
           'Follow</button ></p>';
-        unFollowMe.innerHTML = '<button id="unfollow'+doc.id+'" type="submit" class="btn btn-sm btn-primary waves-effect">' +
+        unFollowMe.innerHTML = '<button id="unfollow' + doc.id + '" type="submit" class="btn btn-sm btn-primary waves-effect">' +
           'UnFollow</button >';
 
         li.appendChild(name);
@@ -432,16 +432,16 @@
         pic.querySelector('.pic').style.backgroundImage = 'url(' + (doc.data().profilePicUrl) + ')';
 
         const followersRef = firebase.firestore().collection('followers').doc(getUserEmail());
-        followersRef.get().then(function(doc2) {
+        followersRef.get().then(function (doc2) {
           //If following, display the unfollow button.  Else, display the follow button
           if (doc2.data().Users.includes(doc.id)) {
-            document.getElementById('follow'+doc.id).style.display="none";
-            document.getElementById('unfollow'+doc.id).style.display="inline-block";
+            document.getElementById('follow' + doc.id).style.display = "none";
+            document.getElementById('unfollow' + doc.id).style.display = "inline-block";
           } else {
-            document.getElementById('follow'+doc.id).style.display="inline-block";
-            document.getElementById('unfollow'+doc.id).style.display="none";
+            document.getElementById('follow' + doc.id).style.display = "inline-block";
+            document.getElementById('unfollow' + doc.id).style.display = "none";
           }
-        }).catch(function(error) {
+        }).catch(function (error) {
           console.log("Error getting document:", error);
         });
 
@@ -449,14 +449,14 @@
         followMe.addEventListener('click', (e) => {
           e.stopPropagation();
           let id = (e).target.parentElement.parentElement.parentElement.getAttribute('data-id');
-          //console.log(id);
           //let followUser = db.collection('Users').doc(id);
           //console.log(followUser);
           var thisUser = getUserEmail();
           //console.log(id);
-          follow(id, thisUser);
-          document.getElementById('follow'+doc.id).style.display="none";
-          document.getElementById('unfollow'+doc.id).style.display="inline-block";
+          //console.log(thisUser);
+          follow(thisUser, id);
+          document.getElementById('follow' + doc.id).style.display = "none";
+          document.getElementById('unfollow' + doc.id).style.display = "inline-block";
         })
 
         unFollowMe.addEventListener('click', (e) => {
@@ -466,9 +466,9 @@
           //let followUser = db.collection('Users').doc(id);
           //console.log(followUser);
           var thisUser = getUserEmail();
-          unfollow(thisUser, id);
-          document.getElementById('follow'+doc.id).style.display="inline-block";
-          document.getElementById('unfollow'+doc.id).style.display="none";
+          unfollow(id, thisUser);
+          document.getElementById('follow' + doc.id).style.display = "inline-block";
+          document.getElementById('unfollow' + doc.id).style.display = "none";
         })
 
       }
