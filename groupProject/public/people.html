@@ -251,7 +251,7 @@
             });
         }
         else {
-          return firebase.firesotre().collection('Users').doc(email).add({
+          return firebase.firestore().collection('Users').doc(email).add({
             name: getUserName(),
 
             email: firebase.auth().currentUser.email,

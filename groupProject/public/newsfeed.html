@@ -232,6 +232,9 @@
       return !!firebase.auth().currentUser;
     }
 
+    function getUserEmail() {
+      return firebase.auth().currentUser.email;
+    }
     // Saves a new Feed to your Cloud Firestore database.
     function saveFeed(FeedText) {
       // Add a new Feed entry to the database.
@@ -271,7 +274,7 @@
           });
       }
       else {
-        return firebase.firesotre().collection('Users').doc(email).add({
+        return firebase.firestore().collection('Users').doc(email).add({
           name: getUserName(),
 
           email: firebase.auth().currentUser.email,
@@ -488,18 +491,27 @@
       }
     }
     function loadNewsFeeds() {
-      // Create the query to load the last 12 Feeds and listen for new ones.
-      var query = firebase.firestore().collection('Feeds').orderBy('timestamp', 'desc').limit(12);
+      // Create the query to load the last 16 Feeds and listen for new ones.
+      var query = firebase.firestore().collection('Feeds').orderBy('timestamp', 'desc').limit(16);
 
       // Start listening to the query.
       query.onSnapshot(function (snapshot) {
-        snapshot.docChanges().forEach(function (change) {
-          if (change.type === 'removed') {
-            deleteFeed(change.doc.id);
-          } else {
-            var Feed = change.doc.data();
-            displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
-          }
+        // Access the followers collection
+        const followersRef = firebase.firestore().collection('followers').doc(getUserEmail());
+        followersRef.get().then(function(doc) {
+          //Get the list of users the current user is following and go from there, displaying only posts from users the current user follows
+          const followedList=doc.data().Users
+          snapshot.docChanges().forEach(function (change) {
+            if (change.type === 'removed') {
+              deleteFeed(change.doc.id);
+            } else if (followedList.includes(change.doc.data().email)){
+              console.log()
+              var Feed = change.doc.data();
+              displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
+            }
+          });
+        }).catch(function(error) {
+          console.log("Error getting document:", error);
         });
       });
     }
