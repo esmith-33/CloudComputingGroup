@@ -453,7 +453,7 @@
           //let followUser = db.collection('Users').doc(id);
           //console.log(followUser);
           var thisUser = getUserEmail();
-          unfollow(id, thisUser);
+          unfollow(thisUser, id);
 
         })
 
@@ -531,6 +531,9 @@
 
       function unfollow(followed, follower) {
         const followersRef = firebase.firestore().collection('followers').doc(followed);
+        console.log(followed)
+        console.log(follower)
+        console.log(followersRef)
         followersRef.update({ Users: remove(follower) });
       }
 
