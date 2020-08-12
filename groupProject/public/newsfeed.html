@@ -493,7 +493,7 @@
           snapshot.docChanges().forEach(function (change) {
             if (change.type === 'removed') {
               deleteFeed(change.doc.id);
-            } else if (followedList.includes(change.doc.data().email)) { //Sorts feed based on following
+            } else if (followedList.includes(change.doc.data().email)) {
               console.log()
               var Feed = change.doc.data();
               displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
@@ -504,7 +504,53 @@
         });
       });
     }
+    // Loads chat Feeds history and listens for upcoming ones.
+    // function loadNewsFeeds() {
+    //   firebase.auth().onAuthStateChanged(function (user) {
+    //     if (user) {
+    //       var myUserId = firebase.auth().currentUser.email;
+    //       function latestFeeds() {
+    //         var myFeed = firebase.firestore().collection('Feeds')
+    //           .where('author', '==', myUserId).orderBy('timestamp', 'desc').limit(5);
 
+
+    //         firebase
+    //           .firestore()
+    //           .collection('followers')
+    //           .doc(myUserId)
+    //           .update({
+    //             latestFeeds: data,
+
+    //           })
+    //         console.log(myFeed);
+    //       }
+    //       latestFeeds();
+
+    //       const sortedPosts = firebase.firestore().collection('followers')
+    //         .where('Users', 'array-contains', myUserId)
+    //         .orderBy('latestFeeds', 'desc')
+    //         .limit(10);
+
+    //       sortedPosts.onSnapshot(function (snapshot) {
+
+    //         console.log('test');
+    //         snapshot.docChanges().forEach(function (change) {
+    //           if (change.type === 'removed') {
+    //             deleteFeed(change.doc.id);
+    //           } else {
+    //             var Feed = change.doc.data();
+    //             displayFeed(change.doc.id, Feed.timestamp, Feed.name, Feed.text, Feed.profilePicUrl, Feed.imageUrl);
+    //           }
+    //         });
+    //       });
+
+    //       // render sortedPosts in DOM
+
+
+    //     }			// Start listening to the query.
+    //   });
+
+    // }
 
     function createAndInsertFeed(id, timestamp) {
       const container = document.createElement('div');

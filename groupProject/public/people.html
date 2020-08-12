@@ -454,7 +454,7 @@
           var thisUser = getUserEmail();
           //console.log(id);
           //console.log(thisUser);
-          follow(thisUser, id);
+          follow(id, thisUser);
           document.getElementById('follow' + doc.id).style.display = "none";
           document.getElementById('unfollow' + doc.id).style.display = "inline-block";
         })
@@ -466,7 +466,7 @@
           //let followUser = db.collection('Users').doc(id);
           //console.log(followUser);
           var thisUser = getUserEmail();
-          unfollow(id, thisUser);
+          unfollow(thisUser, id);
           document.getElementById('follow' + doc.id).style.display = "inline-block";
           document.getElementById('unfollow' + doc.id).style.display = "none";
         })
