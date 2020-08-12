@@ -472,24 +472,7 @@
         })
 
       }
-      // function followButton() {
-      //   firebase.auth().onAuthStateChanged(function (follower) {
-      //     var myEmail = firebase.auth().currentUser.email;
-      //     var following = firebase.firestore().collection('followers')
-      //       .doc(firebase.auth().currentUser.email);
-      //     following.get().then(function (doc) {
-      //       if (doc.exists) {
-      //         console.log("Document data:", doc.data());
-      //       } else {
-      //         // doc.data() will be undefined in this case
-      //         console.log("No such document!");
-      //       }
-      //     }).catch(function (error) {
-      //       console.log("Error getting document:", error);
-      //     });
-      //   });
-      // };
-      // followButton();
+
       // Loads chat Feeds history and listens for upcoming ones.
       function loadUsers() {
         // Create the query to load the last 12 Feeds and listen for new ones.
